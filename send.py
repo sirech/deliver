@@ -17,7 +17,7 @@ class Sender:
     def send(self, msg, *recipients):
         self._send(msg, *recipients)
 
-    def _send(self, msg, *recipients):        
+    def _send(self, msg, *recipients):
         msg.replace_header('Subject', self._prepare_subject(msg['Subject']))
         msg.replace_header('From', self.get_address())
         for recipient in recipients:
