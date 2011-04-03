@@ -25,6 +25,7 @@ class Distributor:
         return len(ids) != 0
 
     def _resend(self, msg):
+	self._edit_msg(msg)
         self._sender.send(msg, *self._mgr.members(self._find_sender_email(msg)))
 
     def _isvalid(self, msg):
@@ -42,7 +43,7 @@ class Distributor:
         candidates = [ msg['From'], msg['Return-Path']]
         for candidate in candidates:
             match = pattern.search(candidate)
-            if match and len(match.groups() == 1):
+            if match and len(match.groups()) == 1:
                 return match.group(1).lower()
         return ''
 
