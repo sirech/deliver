@@ -10,9 +10,9 @@ class Sender:
         self._cfg = self.load_json('configuration.json')
 
     def send(self, content, recipients):
-        msg = self.create_msg('test', 'some message')
         for recipient in recipients:
             s = smtplib.SMTP('localhost')
+            msg = self.create_msg('test', 'some message')
             msg['To'] = recipient
             s.sendmail(self.get_address(), recipient, msg.as_string())
             s.quit()
