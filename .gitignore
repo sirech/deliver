@@ -4,3 +4,4 @@
 *.pyc
 credentials.json
 configuration.json
+members.json

@@ -20,7 +20,7 @@ class Reader:
     def new_messages(self):
         st, msg_list, _ = self._s.list()
         self.check(st)
-        return [msg.split('')[0] for msg in msg_list]
+        return sorted(int(msg.split(' ')[0]) for msg in msg_list)
 
     def get(self, id):
         st, lines, _ = self._s.retr(id)
@@ -34,4 +34,4 @@ class Reader:
         if not st.startswith('+OK') and 'debug' in self._creds:
             from send import Sender
             snd = Sender()
-            snd.send('DEBUG', st, self._creds['debug'])
+            snd.send_new('DEBUG', st, self._creds['debug'])
