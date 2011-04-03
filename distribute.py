@@ -1,9 +1,14 @@
 import json
 import re
 import random
+import logging
+import logging.config
 
 from send import Sender
 from read import Reader
+
+logging.config.fileConfig("logging.conf")
+logging.getLogger('distribute')
 
 class Distributor:
 
@@ -14,6 +19,7 @@ class Distributor:
         self._cfg = json.load(open('configuration.json'))
 
     def update(self):
+        logging.debug('update is called')
         self._reader.connect()
         ids = self._reader.new_messages()
         for id in ids:
@@ -22,10 +28,11 @@ class Distributor:
                 self._resend(msg)
                 self._reader.delete(id)
         self._reader.disconnect()
+        logging.debug('update is finished')
         return len(ids) != 0
 
     def _resend(self, msg):
-	self._edit_msg(msg)
+        self._edit_msg(msg)
         self._sender.send(msg, *self._mgr.members(self._find_sender_email(msg)))
 
     def _isvalid(self, msg):
@@ -35,7 +42,9 @@ class Distributor:
         email = self._find_sender_email(msg)
         for member in self._members['members']:
             if member['email'] in email:
+                logging.debug('_find_sender found %s' % member)
                 return member
+        logging.error('_find_sender for %s had no results' % email)
         return None
 
     def _find_sender_email(self, msg):
@@ -44,7 +53,9 @@ class Distributor:
         for candidate in candidates:
             match = pattern.search(candidate)
             if match and len(match.groups()) == 1:
+                logging.debug('_find_sender_email found %s' % match.groups())
                 return match.group(1).lower()
+        logging.debug('_find_sender_email did not find the email in %s' % candidates)
         return ''
 
     def _edit_msg(self, msg):
@@ -56,12 +67,15 @@ class Distributor:
         for part in msg.walk():
             if part.get_content_type() == 'text':
                 return part
+        logging.error('could not find the text of the message')
         return None
 
     def _add_header(self, msg):
         member = self._find_sender(msg)
         if member is not None:
-            return self._mgr.choose_name(member) + ' ' + self._choose_intro() + ':'
+            header = self._mgr.choose_name(member) + ' ' + self._choose_intro() + ':'
+            logging.debug('_add_header produced: %s' % header)
+            return header
         return ''
 
     def _choose_intro(self):
