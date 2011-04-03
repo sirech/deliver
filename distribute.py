@@ -19,7 +19,7 @@ class Distributor:
         self._reader.disconnect()
 
     def resend(self, msg):
-        self._sender.send(msg, self._mgr.members())
+        self._sender.send(msg, *self._mgr.members())
 
 class MemberMgr:
 
