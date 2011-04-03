@@ -53,9 +53,7 @@ class Distributor:
         header = self._add_header(msg)
         footer = self._add_footer(msg)
         for editable in self._find_actual_text(msg):
-            editable._payload = '\n\n'.join(header,
-                                            editable._payload,
-                                            footer)
+            editable._payload = '\n\n'.join([header, editable._payload, footer])
 
     def _find_actual_text(self, msg):
         for part in msg.walk():
