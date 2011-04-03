@@ -6,8 +6,8 @@ from email.mime.text import MIMEText
 class Sender:
 
     def __init__(self):
-        self._creds = self.load_json('credentials.json')
-        self._cfg = self.load_json('configuration.json')
+        self._creds = json.load(open('credentials.json'))
+        self._cfg = json.load(open('configuration.json'))
 
     def send(self, subject, content, *recipients):
         for recipient in recipients:
@@ -16,9 +16,6 @@ class Sender:
             msg['To'] = recipient
             s.sendmail(self.get_address(), recipient, msg.as_string())
             s.quit()
-
-    def load_json(self, filename):
-        return json.load(open(filename))
 
     def get_address(self):
         return self._creds['sender']

@@ -1,11 +1,12 @@
 import poplib
 import email
+import json
 
 class Reader:
 
     def __init__(self):
-        self._creds = self.load_json('credentials.json')
-        self._cfg = self.load_json('configuration.json')
+        self._creds = json.load(open('credentials.json'))
+        self._cfg = json.load(open('configuration.json'))
 
 
     def connect(self):
