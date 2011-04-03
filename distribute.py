@@ -72,7 +72,7 @@ class Distributor:
         return random.choice(self._cfg['introductions'])
 
     def _add_footer(self, msg):
-        return ''
+        return '\n'.join(['_' * 60, self._cfg['real_name'], random.choice(self._cfg['quotes'])])
 
 class MemberMgr:
 
