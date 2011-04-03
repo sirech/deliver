@@ -33,19 +33,10 @@ class Distributor:
 
     def _resend(self, msg):
         self._edit_msg(msg)
-        self._sender.send(msg, *self._mgr.members(self._find_sender_email(msg)))
+        self._sender.send(msg, *self._mgr.active_members(self._find_sender_email(msg)))
 
     def _isvalid(self, msg):
         return True
-
-    def _find_sender(self, msg):
-        email = self._find_sender_email(msg)
-        for member in self._members['members']:
-            if member['email'] in email:
-                logging.debug('_find_sender found %s' % member)
-                return member
-        logging.error('_find_sender for %s had no results' % email)
-        return None
 
     def _find_sender_email(self, msg):
         pattern = re.compile(r'<(.*?@.*?\..*?)>')
@@ -71,7 +62,7 @@ class Distributor:
         return None
 
     def _add_header(self, msg):
-        member = self._find_sender(msg)
+        member = self._mgr.find_member(self._find_sender_email(msg))
         if member is not None:
             header = self._mgr.choose_name(member) + ' ' + self._choose_intro() + ':'
             logging.debug('_add_header produced: %s' % header)
@@ -90,10 +81,18 @@ class MemberMgr:
         self._members = self._members = json.load(open('members.json'))
 
 
-    def members(self, sender = ''):
+    def active_members(self, sender = ''):
         sender = sender.lower()
         return [member['email'] for member in self._members['members']
                 if member['active'] and member['email'] != sender]
+
+    def find_member(self, email):
+        for member in self._members['members']:
+            if member['email'] in email:
+                logging.debug('find_member found %s' % member)
+                return member
+        logging.error('find_member for %s had no results' % email)
+        return None
 
     def iswhitelisted(self, addr):
         return addr.lower() in self._members['whitelist']
