@@ -50,16 +50,17 @@ class Distributor:
         return ''
 
     def _edit_msg(self, msg):
-        editable = self._find_actual_text(msg)
-        if editable is not None:
-            editable._payload = self._add_header(msg) + editable._payload + self._add_footer(msg)
+        header = self._add_header(msg)
+        footer = self._add_footer(msg)
+        for editable in self._find_actual_text(msg):
+            editable._payload = '\n\n'.join(header,
+                                            editable._payload,
+                                            footer)
 
     def _find_actual_text(self, msg):
         for part in msg.walk():
             if 'text' in part.get_content_type():
-                return part
-        logging.error('could not find the text of the message')
-        return None
+                yield part
 
     def _add_header(self, msg):
         member = self._mgr.find_member(self._find_sender_email(msg))
