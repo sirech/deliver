@@ -50,10 +50,10 @@ class Distributor:
         return ''
 
     def _edit_msg(self, msg):
-        header = self._add_header(msg)
-        footer = self._add_footer(msg)
+        header = self._add_header(msg).encode('utf-8')
+        footer = self._add_footer(msg).encode('utf-8')
         for editable in self._find_actual_text(msg):
-            editable._payload = '\n\n'.join([header, editable._payload, footer]).encode('utf-8')
+            editable._payload = '\n\n'.join([header, editable._payload, footer])
 
     def _find_actual_text(self, msg):
         for part in msg.walk():
