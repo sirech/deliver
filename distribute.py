@@ -65,7 +65,7 @@ class Distributor:
 
     def _find_actual_text(self, msg):
         for part in msg.walk():
-            if part.get_content_type() == 'text':
+            if 'text' in part.get_content_type():
                 return part
         logging.error('could not find the text of the message')
         return None

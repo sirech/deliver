@@ -1,7 +1,15 @@
 import smtplib
 import json
 
+import logging
+import logging.config
+
 from email.mime.text import MIMEText
+
+logging.config.fileConfig("logging.conf")
+logging.getLogger('distribute')
+
+
 
 class Sender:
 
@@ -21,6 +29,7 @@ class Sender:
         msg.replace_header('Subject', self._prepare_subject(msg['Subject']))
         msg.replace_header('From', self.get_address())
         for recipient in recipients:
+            logging.debug('Sending message to %s' % recipient)
             s = smtplib.SMTP(self._creds['smtp_server'])
             msg.replace_header('To', recipient)
             s.sendmail(self.get_address(), recipient, msg.as_string())
