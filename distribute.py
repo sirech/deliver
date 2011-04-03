@@ -11,10 +11,12 @@ class Distributor:
         self._mgr = MemberMgr()
 
     def update(self):
+        self._reader.connect()
         ids = self._reader.new_messages()
         for id in ids:
             self.resend(self._reader.get(id))
             self._reader.delete(id)
+        self._reader.disconnect()
 
     def resend(self, msg):
         self._sender.send(msg, self._mgr.members())
