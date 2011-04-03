@@ -6,6 +6,7 @@ import logging.config
 
 from send import Sender
 from read import Reader
+from email.mime.text import MIMEText
 
 logging.config.fileConfig("logging.conf")
 logging.getLogger('distribute')
@@ -53,7 +54,8 @@ class Distributor:
         header = self._add_header(msg)
         footer = self._add_footer(msg)
         for editable in self._find_actual_text(msg):
-            editable._payload = '\n\n'.join([header, editable._payload, footer])
+            editable._payload = MIMEText('\n\n'.join([header, editable._payload, footer]),
+                                         _charset='utf-8')
 
     def _find_actual_text(self, msg):
         for part in msg.walk():
