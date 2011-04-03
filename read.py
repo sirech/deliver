@@ -9,7 +9,7 @@ class Reader:
 
 
     def connect(self):
-        self._s = poplib.POP3(self._creds['server'])
+        self._s = poplib.POP3(self._creds['pop_server'])
         self.check(self._s.user(self._creds['sender']))
         self.check(self._s.pass_(self._creds['password']))
 

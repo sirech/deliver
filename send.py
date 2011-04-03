@@ -11,7 +11,7 @@ class Sender:
 
     def send(self, subject, content, *recipients):
         for recipient in recipients:
-            s = smtplib.SMTP('localhost')
+            s = smtplib.SMTP(self._creds['smtp_server'])
             msg = self.create_msg(subject, content)
             msg['To'] = recipient
             s.sendmail(self.get_address(), recipient, msg.as_string())
