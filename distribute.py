@@ -87,7 +87,7 @@ class MemberMgr:
 
     def find_member(self, email):
         for member in self._members['members']:
-            if member['email'] in email:
+            if member['email'].lower() in email:
                 logging.debug('find_member found %s' % member)
                 return member
         logging.error('find_member for %s had no results' % email)
