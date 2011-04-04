@@ -55,14 +55,15 @@ class Distributor:
         footer = self._add_footer(msg)
         for editable in self._find_actual_text(msg):
             charset = editable.get_content_charset()
-            editable.set_payload('\n\n'.join([
-                        header.encode(charset, errors='ignore'),
+            nl = '\n' if editable.get_content_subtype() == 'plain' else '<br>'
+            editable.set_payload((nl * 2).join([
+                        nl.join(header).encode(charset, errors='ignore'),
                         editable.get_payload(),
-                        footer.encode(charset, errors='ignore')]))
+                        nl.join(footer).encode(charset, errors='ignore')]))
 
     def _find_actual_text(self, msg):
         for part in msg.walk():
-            if 'text' in part.get_content_type():
+            if 'text' == part.get_content_maintype():
                 yield part
 
     def _add_header(self, msg):
@@ -70,18 +71,17 @@ class Distributor:
         if member is not None:
             header = self._mgr.choose_name(member) + ' ' + self._choose_intro() + ':'
             logging.debug('_add_header produced: %s' % header)
-            return header
-        return ''
+            return [header]
+        return ['']
 
     def _choose_intro(self):
         return random.choice(self._cfg['introductions'])
 
     def _add_footer(self, msg):
-        return '\n'.join([
-                '_' * 60,
+        return ['_' * 60,
                 self._cfg['real_name'],
                 random.choice(self._cfg['quotes']),
-                self._powered_by()])
+                self._powered_by()]
 
     def _powered_by(self):
         name = self._manifest['name']
