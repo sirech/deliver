@@ -10,6 +10,8 @@ from read import Reader
 logging.config.fileConfig("logging.conf")
 logging.getLogger('distribute')
 
+BASIC_EMAIL = re.compile(r'<(.+@.+\..+)>')
+
 class Distributor:
 
     def __init__(self):
@@ -40,10 +42,9 @@ class Distributor:
         return True
 
     def _find_sender_email(self, msg):
-        pattern = re.compile(r'<(.*?@.*?\..*?)>')
         candidates = [ msg['From'], msg['Return-Path']]
         for candidate in candidates:
-            match = pattern.search(candidate)
+            match = BASIC_EMAIL.search(candidate)
             if match and len(match.groups()) == 1:
                 logging.debug('_find_sender_email found %s' % match.groups())
                 return match.group(1).lower()
@@ -58,7 +59,7 @@ class Distributor:
             nl = '\n' if editable.get_content_subtype() == 'plain' else '<br>'
             editable.set_payload((nl * 2).join([
                         nl.join(header).encode(charset, errors='ignore'),
-                        editable.get_payload(),
+                        EMAIL.sub(anonymize_email, editable.get_payload()),
                         nl.join(footer).encode(charset, errors='ignore')]))
 
     def _find_actual_text(self, msg):
@@ -88,6 +89,15 @@ class Distributor:
         version = self._manifest['version']
         description = self._manifest['description']
         return 'Powered by %s %s, %s' % (name, version, description)
+
+EMAIL = re.compile(r'@([a-zA-Z0-9.-]+\.\w{2,3})')
+
+def anonymize_email(match):
+    chars = 'abcdefghijklmnopqrstuvwxyz'
+    replacement = ''
+    for i in range(len(match.group(1))):
+        replacement += random.choice(chars)
+    return '@%s' % replacement
 
 class MemberMgr:
 
