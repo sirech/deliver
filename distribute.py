@@ -17,6 +17,7 @@ class Distributor:
         self._reader = Reader()
         self._mgr = MemberMgr()
         self._cfg = json.load(open('configuration.json'))
+        self._manifest = json.load(open('manifest.json'))
 
     def update(self):
         logging.debug('update is called')
@@ -76,7 +77,17 @@ class Distributor:
         return random.choice(self._cfg['introductions'])
 
     def _add_footer(self, msg):
-        return '\n'.join(['_' * 60, self._cfg['real_name'], random.choice(self._cfg['quotes'])])
+        return '\n'.join([
+                '_' * 60,
+                self._cfg['real_name'],
+                random.choice(self._cfg['quotes']),
+                self._powered_by()])
+
+    def _powered_by(self):
+        name = self._manifest['name']
+        version = self._manifest['version']
+        description = self._manifest['description']
+        return 'Powered by %s %s, %s' % (name, version, description)
 
 class MemberMgr:
 
