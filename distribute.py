@@ -53,7 +53,7 @@ class Distributor:
         header = self._add_header(msg)
         footer = self._add_footer(msg)
         for editable in self._find_actual_text(msg):
-            charset = editable.get_payload().get_content_charset()
+            charset = editable.get_content_charset()
             editable.set_payload('\n\n'.join([
                         header.encode(charset, errors='ignore'),
                         editable.get_payload(),
