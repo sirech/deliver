@@ -1,0 +1,10 @@
+- tests
+- docs
+
+- anonymize emails
+- forbidden words
+
+- whitelist
+ - add to whitelist
+ - hold message
+- daemon
