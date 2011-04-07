@@ -25,11 +25,11 @@ setup(
     packages=find_packages(exclude=[]),
     # scripts=["bin/pyblosxom-cmd"],
     # zip_safe=False,
-    # test_suite="Pyblosxom.tests.testrunner.test_suite",
+    test_suite="deliver.tests.testrunner.test_suite",
     # include_package_data=True,
     install_requires=[],
     classifiers=[
-        # "Development Status :: 5 - Production/Stable",
+        "Development Status :: 3 - Alpha",
         "Environment :: Web Environment",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
