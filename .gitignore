@@ -1,7 +1,14 @@
+# Backups
 .DS_Store
 *~
 #*#
+
+# Packages
 *.pyc
+*.egg
+*.egg-info
+
+# App specific
 *.log
 credentials.json
 configuration.json
