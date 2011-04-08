@@ -25,6 +25,8 @@ class Sender:
         '''
         msg = MIMEText(content)
         msg['Subject'] = self._prepare_subject(subject)
+        msg['From'] = ''
+        msg['To'] = ''
         self._send(msg, *recipients)
 
     def send(self, msg, *recipients):

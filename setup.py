@@ -27,7 +27,9 @@ setup(
     # zip_safe=False,
     test_suite="deliver.tests.testrunner.test_suite",
     # include_package_data=True,
-    install_requires=[],
+    install_requires=[
+        'Mock>=0.7.0',
+        ],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Environment :: Web Environment",
