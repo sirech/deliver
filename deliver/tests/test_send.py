@@ -9,7 +9,7 @@ class SenderTest(BaseTest):
 
     def setUp(self):
         super(SenderTest,self).setUp()
-        self.sender = Sender()
+        self.sender = Sender(self.config)
 
     @patch('smtplib.SMTP')
     @patch.object(SMTP, 'sendmail')

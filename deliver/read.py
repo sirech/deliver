@@ -1,6 +1,5 @@
 import poplib
 import email
-import json
 import logging
 import logging.config
 
@@ -17,16 +16,15 @@ class Reader:
     are not really deleted until the disconnection, either.
     '''
 
-    def __init__(self):
-        self._creds = json.load(open('credentials.json'))
-        self._cfg = json.load(open('configuration.json'))
+    def __init__(self, config):
+        self._cfg = config
 
 
     def connect(self):
         '''Connects to the server, which allows the other methods to be called.'''
-        self._s = poplib.POP3(self._creds['pop_server'])
-        self._check(self._s.user(self._creds['sender']))
-        self._check(self._s.pass_(self._creds['password']))
+        self._s = poplib.POP3(self._cfg['pop_server'])
+        self._check(self._s.user(self._cfg['sender']))
+        self._check(self._s.pass_(self._cfg['password']))
 
     def disconnect(self):
         '''Disconnects from the server, committing the changes.'''
@@ -57,8 +55,8 @@ class Reader:
         Checks the given return code. If there is an error, it is logged and a message is sent
         to a debug address, if one exists.
         '''
-        if not st.startswith('+OK') and 'debug' in self._creds:
+        if not st.startswith('+OK') and 'debug' in self._cfg:
             logging.error('failed operation: %s' % st)
             from send import Sender
-            snd = Sender()
-            snd.send_new('DEBUG', st, self._creds['debug'])
+            snd = Sender(self._cfg)
+            snd.send_new('DEBUG', st, self._cfg['debug'])

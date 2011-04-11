@@ -1,0 +1,53 @@
+#
+# This file contains the configuration for the application.
+#
+
+# Do not edit this
+py = {}
+
+#############
+# CREDENTIALS
+#############
+
+
+# The POP Server used to receive mails.
+py['pop_server'] = 'mail.host.com'
+
+# The SMTP Server used to distribute the mails.
+py['smtp_server'] = 'localhost'
+
+# The address used as the sender in the list.
+py['sender'] = 'sender@host.com'
+
+# The password used to connect to the mail servers.
+py['password'] = 'xxxxxx'
+
+# The address where debug mails are sent.
+py['debug'] = 'controller@host.com'
+
+
+###############
+# CONFIGURATION
+###############
+
+# The text appended at the start of the subject of the mails.
+py['subject_prefix'] = '[My List]',
+
+# The list of possible phrases used to introduce a mail.
+# Will look like: X said that [content]
+py['introductions'] = ['said', 'thinks', 'explains']
+
+# List of possible quotes appended at the end of a mail.
+py['quotes'] = []
+
+# The real name of the list, appended at the end of a mail.
+py['real_name'] = 'My mailing list'
+
+
+#########
+# MEMBERS
+#########
+
+# The members list resides in a json file. Here it is only specified
+# where to find said file.
+py['members'] = 'members.json.example'

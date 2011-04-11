@@ -24,11 +24,11 @@ class Distributor:
     Most options are configurable via json configuration files.
     '''
 
-    def __init__(self):
-        self._sender = Sender()
-        self._reader = Reader()
-        self._mgr = MemberMgr()
-        self._cfg = json.load(open('configuration.json'))
+    def __init__(self, config):
+        self._sender = Sender(config)
+        self._reader = Reader(config)
+        self._mgr = MemberMgr(config)
+        self._cfg = config
         self._manifest = json.load(open('manifest.json'))
 
     def update(self):
@@ -158,8 +158,8 @@ class MemberMgr:
     The members are stored as a json file.
     '''
 
-    def __init__(self):
-        self._members = self._members = json.load(open('members.json'))
+    def __init__(self, config):
+        self._members = self._members = json.load(open(config['members']))
 
     def active_members(self, sender = ''):
         '''
@@ -175,6 +175,8 @@ class MemberMgr:
         '''
         Returns the member with the given email address, or None if there is not one.
         '''
+        # Normalize
+        email = email.lower()
         for member in self._members['members']:
             if member['email'].lower() in email:
                 logging.debug('find_member found %s' % member)
@@ -193,5 +195,6 @@ class MemberMgr:
         return member['name']
 
 if __name__ == '__main__':
-    d = Distributor()
+    from config import py
+    d = Distributor(py)
     d.update()

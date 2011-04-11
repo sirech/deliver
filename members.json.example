@@ -1,0 +1,27 @@
+{
+    "members" : [
+        {
+            "email" : "test@mail.com",
+            "name" : "Name",
+            "aliases" : ["Alternative 1", "Alt 2"],
+            "active" : true
+        },
+        {
+            "email" : "loser@mail.com",
+            "name" : "Unknown",
+            "aliases" : ["Doe 1", "Doe 2"],
+            "active" : true
+        },
+        {
+            "email" : "inactive@mail.com",
+            "name" : "MIA",
+            "aliases" : [],
+            "active" : false
+        }
+    ],
+
+    "whitelist" : [
+        "whitelist@host.com",
+        "whitelist2@host.com"
+    ]
+}

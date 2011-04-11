@@ -11,6 +11,6 @@
 # App specific
 *.log
 credentials.json
-configuration.json
+config.py
 members.json
 logging.conf
