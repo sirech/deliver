@@ -32,7 +32,7 @@ py['debug'] = 'controller@host.com'
 ###############
 
 # The text appended at the start of the subject of the mails.
-py['subject_prefix'] = u'[My List]',
+py['subject_prefix'] = u'[My List]'
 
 # The list of possible phrases used to introduce a mail.
 # Will look like: X said that [content]
