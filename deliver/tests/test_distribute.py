@@ -1,4 +1,3 @@
-# -*- coding: latin-1 -*-
 import email
 
 from test_base import BaseTest
@@ -56,7 +55,7 @@ class DistributorTest(BaseTest):
 
     def test_create_header(self):
         simple_sender = email.message_from_file(open('sample2'))
-        self.config['introductions'] = [ u'salté' ]
+        self.config['introductions'] = [ u'salt\xe9' ]
         self.assertEqual(self.distributor._create_header(simple_sender),
                          [u'MIA salt\xe9:'])
 

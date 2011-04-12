@@ -150,8 +150,3 @@ def anonymize_email(match):
     replacement = ''.join(random.choice(chars) for i in range(len(match.group(1))))
     logging.debug('replacing %s with %s' % (match.group(1), replacement))
     return '@%s' % replacement
-
-if __name__ == '__main__':
-    from config import py
-    d = Distributor(py)
-    d.update()

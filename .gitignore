@@ -10,7 +10,6 @@
 
 # App specific
 *.log
-credentials.json
 config.py
 members.json
 logging.conf
