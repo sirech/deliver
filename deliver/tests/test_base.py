@@ -7,10 +7,10 @@ class BaseTest(unittest.TestCase):
             'sender' : 'test@test.com',
             'smtp_server' : 'localhost',
             'pop_server' : 'mail.test.com',
-            'password' : '',
-            'subject_prefix' : '',
-            'introductions' : [],
-            'quotes' : [],
-            'real_name' : '',
+            'password' : 'abcdef',
+            'subject_prefix' : u'[Test]',
+            'introductions' : [u'says', u'tells'],
+            'quotes' : [u'No quote', u'No quote 2'],
+            'real_name' : u'Test',
             'members' : 'members.json.example'
             }
