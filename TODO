@@ -1,10 +1,21 @@
 - tests
+ - tests using config
+ 
 - docs
+ - readme
+ - install guide
 
 - anonymize emails
+
 - forbidden words
 
 - whitelist
  - add to whitelist
  - hold message
+ 
 - daemon
+
+- db
+ - digest
+
+- encoding 

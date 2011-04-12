@@ -17,7 +17,7 @@ class DistributorTest(BaseTest):
         self.distributor._sender = self.sender
         self.reader = Mock(spec=Reader)
         self.distributor._reader = self.reader
-        self.msg = email.message_from_file(open('sample'))
+        self.msg = email.message_from_file(open('test_data/sample'))
 
     def test_update_nothing_new(self):
         self.reader.new_messages.return_value = []
@@ -55,7 +55,7 @@ class DistributorTest(BaseTest):
                              2)
 
     def test_create_header_special_chars(self):
-        simple_sender = email.message_from_file(open('sample2'))
+        simple_sender = email.message_from_file(open('test_data/sample2'))
         self.config['introductions'] = [ u'salté' ]
         self.assertEqual(self.distributor._create_header(simple_sender),
                          [u'MIA salt\xe9:'])
@@ -73,7 +73,7 @@ class DistributorTest(BaseTest):
         self.assertTrue(quote in self.distributor._create_footer(self.msg))
 
     def test_edit_msg_anonymize(self):
-        with_emails = email.message_from_file(open('sample3'))
+        with_emails = email.message_from_file(open('test_data/sample3'))
         self.distributor._edit_msg(with_emails)
         texts = [msg.get_payload() for msg in with_emails.get_payload()]
         for text in texts:
