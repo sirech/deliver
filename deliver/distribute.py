@@ -91,7 +91,7 @@ class Distributor:
         footer = self._create_footer(msg)
         for editable in self._find_actual_text(msg):
             charset = editable.get_content_charset()
-            nl = u'\n' if editable.get_content_subtype() == 'plain' else u'<br>'
+            nl = '\n' if editable.get_content_subtype() == 'plain' else '<br>'
             editable.set_payload((nl * 2).join([
                         nl.join(header).encode(charset),
                         EMAIL.sub(anonymize_email, editable.get_payload()),

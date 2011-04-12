@@ -32,17 +32,17 @@ py['debug'] = 'controller@host.com'
 ###############
 
 # The text appended at the start of the subject of the mails.
-py['subject_prefix'] = u'[My List]'
+py['subject_prefix'] = '[My List]'
 
 # The list of possible phrases used to introduce a mail.
 # Will look like: X said that [content]
-py['introductions'] = [u'said', u'thinks', u'explains']
+py['introductions'] = ['said', 'thinks', 'explains']
 
 # List of possible quotes appended at the end of a mail.
 py['quotes'] = []
 
 # The real name of the list, appended at the end of a mail.
-py['real_name'] = u'My mailing list'
+py['real_name'] = 'My mailing list'
 
 
 #########
