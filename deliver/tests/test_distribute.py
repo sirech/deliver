@@ -1,3 +1,4 @@
+# -*- coding: latin-1 -*-
 import email
 
 from test_base import BaseTest
@@ -53,9 +54,9 @@ class DistributorTest(BaseTest):
         self.assertEqual(len(list((self.distributor._find_actual_text(self.msg)))),
                              2)
 
-    def test_create_header(self):
+    def test_create_header_special_chars(self):
         simple_sender = email.message_from_file(open('sample2'))
-        self.config['introductions'] = [ u'salt\xe9' ]
+        self.config['introductions'] = [ u'salté' ]
         self.assertEqual(self.distributor._create_header(simple_sender),
                          [u'MIA salt\xe9:'])
 
@@ -65,6 +66,11 @@ class DistributorTest(BaseTest):
     def test_create_footer(self):
         self.assertTrue(self.distributor._create_footer(self.msg)[2] in
                         self.config['quotes'])
+
+    def test_create_footer_special_chars(self):
+        quote = u'salté la fuente'
+        self.config['quotes'] = [quote]
+        self.assertTrue(quote in self.distributor._create_footer(self.msg))
 
     def test_edit_msg_anonymize(self):
         with_emails = email.message_from_file(open('sample3'))
