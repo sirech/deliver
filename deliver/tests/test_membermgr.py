@@ -1,6 +1,6 @@
 from test_base import BaseTest
 
-from deliver.distribute import MemberMgr
+from deliver.members import MemberMgr
 
 class MemberMgrTest(BaseTest):
 
