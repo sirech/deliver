@@ -9,12 +9,13 @@ except ImportError:
     from setuptools import setup, find_packages
     print "Using setuptools...."
 
-version = "0.3.4"
+import json
+creds = json.load(open('manifest.json'))
 
 setup(
-    name="deliver",
-    version=version,
-    description="The astonishingly simple anonymous mailing list.",
+    name=creds['name'],
+    version=creds['version'],
+    description=creds['description'],
     long_description=open('README.markdown').read(),
     license='MIT',
     author="Mario Fernandez",
