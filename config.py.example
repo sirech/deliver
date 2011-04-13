@@ -6,9 +6,9 @@
 # Do not edit this
 py = {}
 
-#############
+###############
 # CREDENTIALS
-#############
+###############
 
 
 # The POP Server used to receive mails.
@@ -45,10 +45,30 @@ py['quotes'] = []
 py['real_name'] = 'My mailing list'
 
 
-#########
+###############
 # MEMBERS
-#########
+###############
 
 # The members list resides in a json file. Here it is only specified
 # where to find said file.
 py['members'] = 'members.json.example'
+
+
+###############
+# DB
+###############
+
+# Whether a db is configured or not (for archiving, digests, ...)
+py['has_db'] = False
+
+# The host where the DB is located.
+py['db_host'] = 'db.host.com'
+
+# The name of the DB.
+py['db_name'] = 'db'
+
+# The user to access the DB.
+py['db_user'] = 'dbuser'
+
+# The password to use for the DB.
+py['db_password'] = 'xxxxxx'
