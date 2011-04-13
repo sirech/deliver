@@ -1,4 +1,4 @@
-# -*- coding: latin-1 -*-
+# -*- coding: utf-8 -*-
 import email
 
 from test_base import BaseTest
@@ -52,13 +52,7 @@ class DistributorTest(BaseTest):
 
     def test_find_actual_text(self):
         self.assertEqual(len(list((self.distributor._find_actual_text(self.msg)))),
-                             2)
-
-    def test_create_header_special_chars(self):
-        simple_sender = email.message_from_file(open('test_data/sample2'))
-        self.config['introductions'] = [ u'salt�' ]
-        self.assertEqual(self.distributor._create_header(simple_sender),
-                         [u'MIA salt\xe9:'])
+                         2)
 
     def test_choose_intro(self):
         self.assertTrue(self.distributor._choose_intro() in self.config['introductions'])
@@ -66,11 +60,6 @@ class DistributorTest(BaseTest):
     def test_create_footer(self):
         self.assertTrue(self.distributor._create_footer(self.msg)[2] in
                         self.config['quotes'])
-
-    def test_create_footer_special_chars(self):
-        quote = u'salt� la fuente'
-        self.config['quotes'] = [quote]
-        self.assertTrue(quote in self.distributor._create_footer(self.msg))
 
     def test_edit_msg_anonymize(self):
         with_emails = email.message_from_file(open('test_data/sample3'))
@@ -80,4 +69,19 @@ class DistributorTest(BaseTest):
             self.assertTrue('sender@' in text)
             self.assertFalse('@host.com' in text)
 
+    def test_create_header_special_chars(self):
+        simple_sender = email.message_from_file(open('test_data/sample2'))
+        self.config['introductions'] = [ u'salté' ]
+        self.assertEqual(self.distributor._create_header(simple_sender),
+                         [u'MIA salté:'])
 
+    def test_create_footer_special_chars(self):
+        quote = u'salté la fuente'
+        self.config['quotes'] = [quote]
+        self.assertTrue(quote in self.distributor._create_footer(self.msg))
+
+    def test_edit_msg_special_chars(self):
+        self.config['introductions'] = [ u'salté' ]
+        quote = u'salté la fuente'
+        self.config['quotes'] = [quote]
+        self.distributor._edit_msg(self.msg)
