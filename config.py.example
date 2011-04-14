@@ -58,8 +58,8 @@ py['members'] = 'members.json.example'
 # DB
 ###############
 
-# Whether a db is configured or not (for archiving, digests, ...)
-py['has_db'] = False
+# The type of DB used by the list
+py['db_type'] = 'sqlite'
 
 # The host where the DB is located.
 py['db_host'] = 'db.host.com'
