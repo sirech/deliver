@@ -3,10 +3,11 @@
 *~
 #*#
 
-# Packages
+# Python
 *.pyc
 *.egg
 *.egg-info
+.ropeproject
 
 # App specific
 *.log
