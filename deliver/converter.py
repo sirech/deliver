@@ -1,6 +1,6 @@
 import email
 from cStringIO import StringIO
-from email import Charset
+from email.charset import add_charset, Charset, QP
 from email.generator import Generator
 from email.header import decode_header, make_header, Header
 
@@ -27,7 +27,10 @@ def reencode(s, encoding=None):
     else:
         return (to_unicode(s, encoding).encode('utf-8'), 'utf-8')
 
-class UnicodeMessage:
+# Globally replace base64 with quoted-printable
+add_charset('utf-8', QP, QP, 'utf-8')
+
+class UnicodeMessage():
     '''
     Wrapper around a email.message.Message.
 
@@ -40,22 +43,24 @@ class UnicodeMessage:
     be used elsewhere.
     '''
 
-    def __init__(self, msg):
+    def __init__(self, msg, convert=True):
         '''
         Create a message that is fully utf-8 encoded.
 
-        The msg is the original message. It is converted to utf-8. All
-        the interactions with it should be done through this class.
+        msg is the original message.
+
+        Optional convert whether the whole message (including
+        submessages) should be encoded to utf-8.
         '''
         if not isinstance(msg, email.message.Message):
             raise TypeError('msg is not a Message')
         self._msg = msg
+        self._charset = Charset(input_charset='utf-8')
+        assert self._charset.header_encoding == QP
 
-        # Globally replace base64 with quoted-printable
-        Charset.add_charset('utf-8', Charset.QP, Charset.QP, 'utf-8')
-
-        for part in self._msg.walk():
-            self._convert_part(part)
+        if convert:
+            for part in self._msg.walk():
+                self._convert_part(part)
 
     def _convert_part(self, part):
         '''
@@ -110,7 +115,7 @@ class UnicodeMessage:
         return u''.join(to_unicode(*tupl) for tupl in decode_header(value))
 
     def replace_header(self, name, value):
-        '''Replaces the given header with the given value.
+        '''Forwards the call to replace_header
 
         The value is passed as a unicode string. This method tries to
         avoid encoding the value with a Header (i.e when the value is
@@ -122,3 +127,36 @@ class UnicodeMessage:
         except UnicodeEncodeError:
             header = Header(value.encode('utf-8'), 'UTF-8').encode()
         self._msg.replace_header(name, header)
+
+    def get_payload(self, i=None, decode=False):
+        '''
+        Forwards the call to get_payload.
+
+        Instances of the type email.message.Message are wrapped as a
+        UnicodeMessage. Strings are returned as unicode.
+        '''
+        payload = self._msg.get_payload(i, decode)
+        if isinstance(payload, list):
+            return [UnicodeMessage(msg, convert=False) for msg in payload]
+        elif isinstance(payload, email.message.Message):
+            return UnicodeMessage(payload, convert=False)
+        elif isinstance(payload, str):
+            return to_unicode(payload)
+        return payload
+
+    def set_payload(self, payload):
+        '''
+        Forwards the call to set_payload.
+
+        If the payload is text, it is passed as a unicode string. Text
+        is encoded again before being passed.
+        '''
+        assert not isinstance(payload, str)
+        if isinstance(payload, unicode):
+            payload = self._charset.body_encode(payload.encode('utf-8'), convert=False)
+        self._msg.set_payload(payload)
+
+    from email.Iterators import walk
+
+    def __getattr__(self, name):
+        return getattr(self._msg, name)
