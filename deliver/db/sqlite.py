@@ -7,4 +7,6 @@ class DBWrapper(BaseDBWrapper):
     '''
     def __init__(self, **kws):
         super(DBWrapper,self).__init__()
-        self.engine = sqlalchemy.create_engine('sqlite:///:memory:', echo=True, encoding='utf-8')
+        self.engine = sqlalchemy.create_engine('sqlite:///%s' % kws['name'],
+                                               echo=False, encoding='utf-8')
+        self._create_tables()

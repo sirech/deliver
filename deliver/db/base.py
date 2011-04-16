@@ -2,8 +2,9 @@ from sqlalchemy import Table, Column, Integer, String, Text, DateTime, MetaData,
 
 class BaseDBWrapper(object):
 
-    def create_tables(self):
+    def _create_tables(self):
         metadata = MetaData()
+        metadata.bind = self.engine
         self.messages = Table('messages', metadata,
                          Column('id', Integer, primary_key=True),
                          Column('content', Text, nullable=False),
@@ -12,7 +13,7 @@ class BaseDBWrapper(object):
 
         self.digests = Table('digests', metadata,
                         Column('msg_id', Integer, ForeignKey('messages.id'), nullable=False),
-                        Column('to', String(256), nullable=False),
+                        Column('send_to', String(256), nullable=False),
                         Column('scheduled_at', DateTime, nullable=False),
                         Column('sent_at', DateTime))
 

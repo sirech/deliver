@@ -52,11 +52,7 @@ class Reader:
 
     def _check(self, st):
         '''
-        Checks the given return code. If there is an error, it is logged and a message is sent
-        to a debug address, if one exists.
+        Checks the given return code. If there is an error, it is logged.
         '''
-        if not st.startswith('+OK') and 'debug' in self._cfg:
+        if not st.startswith('+OK'):
             logging.error('failed operation: %s' % st)
-            from send import Sender
-            snd = Sender(self._cfg)
-            snd.send_new('DEBUG', st, self._cfg['debug'])

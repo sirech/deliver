@@ -16,17 +16,6 @@ class Sender:
     def __init__(self, config):
         self._cfg = config
 
-    def send_new(self, subject, content, *recipients):
-        '''
-        Creates a new email and sends it to each of the specified recipients.
-        The subject and content are given as strings, and are added to a new plain text email.
-        '''
-        msg = MIMEText(content)
-        msg['Subject'] = self._prepare_subject(subject)
-        msg['From'] = ''
-        msg['To'] = ''
-        self._send(msg, *recipients)
-
     def send(self, msg, *recipients):
         '''
         Sends the given message to each of the specified recipients.

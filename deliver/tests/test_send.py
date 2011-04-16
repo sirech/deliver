@@ -11,15 +11,15 @@ class SenderTest(BaseTest):
         super(SenderTest,self).setUp()
         self.sender = Sender(self.config)
 
-    @patch('smtplib.SMTP')
-    @patch.object(SMTP, 'sendmail')
-    def test_send(self, smtp, sendmail):
-        self.sender.send_new('test mail', 'content', 'email@address.com')
+    # @patch('smtplib.SMTP')
+    # @patch.object(SMTP, 'sendmail')
+    # def test_send(self, smtp, sendmail):
+    #     self.sender.send_new('test mail', 'content', 'email@address.com')
 
-        self.assertEqual(sendmail.call_count, 1)
+    #     self.assertEqual(sendmail.call_count, 1)
 
-        print sendmail.call_args
-        # self.assertEqual(smtp.quit.call_count, 1)
+    #     print sendmail.call_args
+    #     # self.assertEqual(smtp.quit.call_count, 1)
 
     def test_get_address(self):
         self.assertEqual(self.sender.get_address(),self.config['sender'])
