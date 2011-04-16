@@ -1,5 +1,7 @@
 import smtplib
 
+from converter import UnicodeMessage
+
 import logging
 import logging.config
 
@@ -16,13 +18,16 @@ class Sender:
 
     def send(self, msg, *recipients):
         '''
-        Sends the given message to each of the specified recipients.
+        Sends the given UnicodeMessage to each of the specified recipients.
         '''
+        assert isinstance(msg, UnicodeMessage)
+        for recipient in recipients:
+            assert isinstance(recipient, unicode)
         self._send(msg, *recipients)
 
     def _send(self, msg, *recipients):
         '''
-        Sends the given message to each of the specified recipients.
+        Sends the given UnicodeMessage to each of the specified recipients.
 
         The emails are sent from the specified server, using the specified address. The subject
         is modified to include a subject prefix if it is not already there.
