@@ -6,10 +6,10 @@ from deliver.distribute import Distributor
 from deliver.read import Reader
 from deliver.send import Sender
 
-class DistributorTest(BaseTest):
+class DistributeTest(BaseTest):
 
     def setUp(self):
-        super(DistributorTest,self).setUp()
+        super(DistributeTest,self).setUp()
         self.distributor = Distributor(self.config)
         self.sender = Mock(spec=Sender)
         self.distributor._sender = self.sender

@@ -3,8 +3,6 @@ import smtplib
 import logging
 import logging.config
 
-from email.mime.text import MIMEText
-
 logging.config.fileConfig("logging.conf")
 logging.getLogger('distribute')
 

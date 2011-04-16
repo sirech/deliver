@@ -7,6 +7,7 @@ import logging.config
 from send import Sender
 from read import Reader
 from members import MemberMgr
+from db.store import Store
 
 logging.config.fileConfig("logging.conf")
 logging.getLogger('distribute')
@@ -29,6 +30,7 @@ class Distributor:
         self._sender = Sender(config)
         self._reader = Reader(config)
         self._mgr = MemberMgr(config)
+        self._store = Store(config)
         self._cfg = config
         self._manifest = json.load(open('manifest.json'))
 

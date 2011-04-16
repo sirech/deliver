@@ -21,4 +21,6 @@ class Store:
         module = choose_backend(self._cfg['type'])
         self._db = module.DBWrapper(**self._cfg)
 
+    def archive(self, msg):
+        pass
 

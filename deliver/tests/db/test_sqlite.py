@@ -4,7 +4,7 @@ import email
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError
 
-from deliver.tests.test_base import BaseTest, load_msg
+from deliver.tests.test_base import BaseTest, load_msg, load_all_msg
 from deliver.db.sqlite import DBWrapper
 
 class SQLiteTest(BaseTest):
@@ -26,7 +26,7 @@ class SQLiteTest(BaseTest):
         self.db.messages.insert().values(content='a message', received_at=datetime.now()).execute()
 
     def _write_msgs(self):
-        mails = [load_msg(fileName) for fileName in ['sample', 'sample2', 'sample3']]
+        mails = load_all_msg()
         for mail in mails:
             self.db.messages.insert().values(content=mail.as_string(),
                                              received_at=datetime.now()).execute()
@@ -48,12 +48,12 @@ class SQLiteTest(BaseTest):
         mail = email.message_from_string(self.db.messages.
                                          select(self.db.messages.c.id == 1).execute()
                                          .fetchone()['content'])
-        import difflib
-        import sys
-        base = load_msg('sample')
-        print base.as_string().split('\n')
-        print '#' * 60
-        print mail.as_string().split('\n')
+        # import difflib
+        # import sys
+        # base = load_msg('sample')
+        # print base.as_string().split('\n')
+        # print '#' * 60
+        # print mail.as_string().split('\n')
 
     def test_write_valid_digest(self):
         self.db.digests.insert().values(msg_id=1,

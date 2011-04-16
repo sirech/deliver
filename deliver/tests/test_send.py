@@ -5,10 +5,10 @@ from mock import patch, Mock
 from smtplib import SMTP
 from deliver.send import Sender
 
-class SenderTest(BaseTest):
+class SendTest(BaseTest):
 
     def setUp(self):
-        super(SenderTest,self).setUp()
+        super(SendTest,self).setUp()
         self.sender = Sender(self.config)
 
     # @patch('smtplib.SMTP')

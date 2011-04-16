@@ -3,6 +3,8 @@ import email
 import logging
 import logging.config
 
+from converter import UnicodeMessage
+
 logging.config.fileConfig("logging.conf")
 logging.getLogger('distribute')
 
@@ -41,10 +43,10 @@ class Reader:
         return sorted(int(msg.split(' ')[0]) for msg in msg_list)
 
     def get(self, id):
-        '''Gets the message identified by the given id as a email object.'''
+        '''Gets the message identified by the given id as a UnicodeMessage.'''
         st, lines, _ = self._s.retr(id)
         self._check(st)
-        return email.message_from_string('\n'.join(lines))
+        return UnicodeMessage(email.message_from_string('\r\n'.join(lines)))
 
     def delete(self, id):
         '''Marks the message identified by the given id for removal.'''

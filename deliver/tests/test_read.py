@@ -1,14 +1,13 @@
-import unittest
 from test_base import BaseTest
-from mock import patch, Mock
+from mock import patch
 
 from poplib import POP3
 from deliver.read import Reader
 
-class ReaderTest(BaseTest):
+class ReadTest(BaseTest):
 
     def setUp(self):
-        super(ReaderTest,self).setUp()
+        super(ReadTest,self).setUp()
         self.reader = Reader(self.config)
 
     @patch('poplib.POP3')
