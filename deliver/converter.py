@@ -52,9 +52,10 @@ class UnicodeMessage():
         if not isinstance(msg, email.message.Message):
             raise TypeError('msg is not a Message')
         self._msg = msg
-        self._charset = Charset(input_charset='utf-8')
-        assert self._charset.header_encoding == QP
-        assert self._charset.body_encoding == QP
+        charset = msg.get_content_charset() or 'utf-8'
+        self._body_charset = Charset(input_charset=charset)
+        assert self._body_charset.header_encoding == QP
+        assert self._body_charset.body_encoding == QP
 
     def __str__(self):
         return self.as_string()
@@ -116,11 +117,15 @@ class UnicodeMessage():
         Forwards the call to set_payload.
 
         If the payload is text, it is passed as a unicode string. Text
-        is encoded again before being passed.
+        is encoded again before being passed. The content encoding is
+        changed to quoted printable to avoid encoding
+        incompatibilities.
         '''
         assert not isinstance(payload, str)
         if isinstance(payload, unicode):
-            payload = self._charset.body_encode(payload.encode('utf-8'), convert=False)
+            self.replace_header('Content-Transfer-Encoding', u'quoted-printable')
+            payload = self._body_charset.body_encode(
+                payload.encode(self._body_charset.input_charset), convert=False)
         self._msg.set_payload(payload)
 
     from email.Iterators import walk
