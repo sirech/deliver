@@ -1,5 +1,6 @@
 import json
 import random
+import codecs
 
 import logging
 import logging.config
@@ -16,7 +17,7 @@ class MemberMgr:
     '''
 
     def __init__(self, config):
-        self._members = json.load(open(config['members']), encoding='utf-8')
+        self._members = json.load(codecs.open(config['members'], 'r', 'utf-8'))
 
     def active_members(self, sender = u''):
         '''
