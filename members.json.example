@@ -13,6 +13,12 @@
             "active" : true
         },
         {
+            "email" : "stranger@mail.com",
+            "name" : "Niño Él",
+            "aliases" : ["Sí", "Quizás"],
+            "active" : true
+        },
+        {
             "email" : "inactive@mail.com",
             "name" : "MIA",
             "aliases" : [],

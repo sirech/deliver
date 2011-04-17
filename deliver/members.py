@@ -16,12 +16,15 @@ class MemberMgr:
     '''
 
     def __init__(self, config):
-        self._members = self._members = json.load(open(config['members']))
+        self._members = json.load(open(config['members']), encoding='utf-8')
 
-    def active_members(self, sender = ''):
+    def active_members(self, sender = u''):
         '''
-        Returns the email addresses of all the active members of the
-        list, except of the sender, if one is given.
+        Returns a list with the email addresses of all the active members of the
+        list, as unicode strings.
+
+        Optional sender the sender, who should be excluded from the
+        results.
         '''
         # Normalize
         sender = sender.lower()
