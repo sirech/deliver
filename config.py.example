@@ -18,13 +18,10 @@ py['pop_server'] = 'mail.host.com'
 py['smtp_server'] = 'localhost'
 
 # The address used as the sender in the list.
-py['sender'] = 'sender@host.com'
+py['sender'] = u'sender@host.com'
 
 # The password used to connect to the mail servers.
 py['password'] = 'xxxxxx'
-
-# The address where debug mails are sent.
-py['debug'] = 'controller@host.com'
 
 
 ###############
@@ -32,17 +29,17 @@ py['debug'] = 'controller@host.com'
 ###############
 
 # The text appended at the start of the subject of the mails.
-py['subject_prefix'] = '[My List]'
+py['subject_prefix'] = u'[My List]'
 
 # The list of possible phrases used to introduce a mail.
 # Will look like: X said that [content]
-py['introductions'] = ['said', 'thinks', 'explains']
+py['introductions'] = [u'said', u'thinks', u'explains']
 
 # List of possible quotes appended at the end of a mail.
-py['quotes'] = []
+py['quotes'] = [u'Chuck Norris can divide by 0']
 
 # The real name of the list, appended at the end of a mail.
-py['real_name'] = 'My mailing list'
+py['real_name'] = u'My mailing list'
 
 
 ###############

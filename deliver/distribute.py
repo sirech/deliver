@@ -125,7 +125,7 @@ class Distributor:
         Creates a footer for the message, returned as a list of strings. The footer contains the
         name of the list, a randomly chosen quote and the program id.
         '''
-        return ['_' * 60,
+        return [u'_' * 60,
                 self._cfg['real_name'],
                 random.choice(self._cfg['quotes']),
                 self._powered_by()]
@@ -137,7 +137,7 @@ class Distributor:
         name = self._manifest['name']
         version = self._manifest['version']
         description = self._manifest['description']
-        return 'Powered by %s %s, %s' % (name, version, description)
+        return u'Powered by %s %s, %s' % (name, version, description)
 
 # Identify the host in an email
 EMAIL = re.compile(r'@([a-zA-Z0-9.-]+\.\w{2,3})')
@@ -150,4 +150,4 @@ def anonymize_email(match):
     chars = 'abcdefghijklmnopqrstuvwxyz'
     replacement = ''.join(random.choice(chars) for i in range(len(match.group(1))))
     logging.debug('replacing %s with %s' % (match.group(1), replacement))
-    return '@%s' % replacement
+    return u'@%s' % replacement
