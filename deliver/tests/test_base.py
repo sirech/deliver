@@ -1,10 +1,12 @@
 import unittest
 import email
 
+from deliver.converter import UnicodeMessage
+
 def load_msg(fileName):
     '''Loads the message contained in the given file and returns it as
-    an email.'''
-    return email.message_from_file(open('test_data/%s' % fileName))
+    an UnicodeMessage.'''
+    return UnicodeMessage(email.message_from_file(open('test_data/%s' % fileName)))
 
 def load_all_msg():
     '''Loads all the available sample messages and returns them as a list.'''

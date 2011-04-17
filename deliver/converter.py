@@ -2,7 +2,7 @@ import email
 from cStringIO import StringIO
 from email.charset import add_charset, Charset, QP
 from email.generator import Generator
-from email.header import decode_header, make_header, Header
+from email.header import decode_header, Header
 
 def to_unicode(s, encoding=None):
     '''
@@ -32,62 +32,29 @@ add_charset('utf-8', QP, QP, 'utf-8')
 
 class UnicodeMessage():
     '''
-    Wrapper around a email.message.Message.
+    Wrapper around a email.message.Message, that allows to interact
+    with the message using decoded unicode strings.
 
-    The message is converted to utf-8 right at the beginning. Part of
-    the interface to Message is supported. The interface methods
-    return normal unicode strings, with the email-specific encoding
-    parts removed.
+    Part of the interface to Message is supported. The interface
+    methods return normal unicode strings, with the email-specific
+    encoding parts removed.
 
-    The underlying message is transformed by this class and should not
+    The underlying message might be transformed by this class and should not
     be used elsewhere.
     '''
 
-    def __init__(self, msg, convert=True):
+    def __init__(self, msg):
         '''
         Create a message that is fully utf-8 encoded.
 
         msg is the original message.
-
-        Optional convert whether the whole message (including
-        submessages) should be encoded to utf-8.
         '''
         if not isinstance(msg, email.message.Message):
             raise TypeError('msg is not a Message')
         self._msg = msg
         self._charset = Charset(input_charset='utf-8')
         assert self._charset.header_encoding == QP
-
-        if convert:
-            for part in self._msg.walk():
-                self._convert_part(part)
-
-    def _convert_part(self, part):
-        '''
-        Encodes the header and body of the given message part in utf-8.
-        '''
-        self._convert_header(part)
-        self._convert_body(part)
-
-    def _convert_header(self, part):
-        '''
-        Encodes every already encoded element in the header of this message part in utf-8.
-
-        Elements that are not encoded are left unchanged.
-        '''
-        for key in part.keys():
-            header = make_header(reencode(*tupl) for tupl in decode_header(part[key])).encode()
-            part.replace_header(key, header)
-
-    def _convert_body(self, part):
-        '''
-        If the body of the message part is text, encodes it in utf-8.
-
-        To do this, the set_charset method in the Message class is
-        used. It takes care of reencoding the content if necessary.
-        '''
-        if part.get_content_maintype() == 'text':
-            part.set_charset('utf-8')
+        assert self._charset.body_encoding == QP
 
     def __str__(self):
         return self.as_string()
@@ -137,11 +104,11 @@ class UnicodeMessage():
         '''
         payload = self._msg.get_payload(i, decode)
         if isinstance(payload, list):
-            return [UnicodeMessage(msg, convert=False) for msg in payload]
+            return [UnicodeMessage(msg) for msg in payload]
         elif isinstance(payload, email.message.Message):
-            return UnicodeMessage(payload, convert=False)
+            return UnicodeMessage(payload)
         elif isinstance(payload, str):
-            return to_unicode(payload)
+            return to_unicode(payload, self._msg.get_content_charset())
         return payload
 
     def set_payload(self, payload):

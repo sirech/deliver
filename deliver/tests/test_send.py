@@ -4,7 +4,6 @@ from mock import patch
 from smtplib import SMTP
 
 from deliver.send import Sender
-from deliver.converter import UnicodeMessage
 
 class SendTest(BaseTest):
 
@@ -15,7 +14,7 @@ class SendTest(BaseTest):
     @patch('smtplib.SMTP')
     @patch.object(SMTP, 'sendmail')
     def test_send(self, smtp, sendmail):
-        msg = UnicodeMessage(load_msg('sample'))
+        msg = load_msg('sample')
         self.sender.send(msg, u'email@address.com')
 
         self.assertEqual(sendmail.call_count, 1)

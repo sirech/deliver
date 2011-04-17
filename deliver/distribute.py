@@ -92,12 +92,11 @@ class Distributor:
         header = self._create_header(msg)
         footer = self._create_footer(msg)
         for editable in self._find_actual_text(msg):
-            charset = editable.get_content_charset()
-            nl = '\n' if editable.get_content_subtype() == 'plain' else '<br>'
+            nl = u'\n' if editable.get_content_subtype() == 'plain' else u'<br>'
             editable.set_payload((nl * 2).join([
-                        nl.join(header).encode(charset),
-                        EMAIL.sub(anonymize_email, editable.get_payload()),
-                        nl.join(footer).encode(charset)]))
+                        nl.join(header),
+                        EMAIL.sub(anonymize_email, editable.get_payload(decode=True)),
+                        nl.join(footer)]))
 
     def _find_actual_text(self, msg):
         '''Yields all the parts of the message that can be interpreted as text.'''
