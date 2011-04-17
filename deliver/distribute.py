@@ -56,6 +56,7 @@ class Distributor:
         Sends a message to the appropriate members of the list after processing it.
         '''
         self._edit_msg(msg)
+        self._store.archive(msg)
         self._sender.send(msg, *self._mgr.active_members(self._find_sender_email(msg)))
 
     def _isvalid(self, msg):

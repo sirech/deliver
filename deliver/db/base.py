@@ -1,8 +1,13 @@
 from sqlalchemy import Table, Column, Integer, String, Text, DateTime, MetaData, ForeignKey
+from sqlalchemy.orm import mapper
+
+from deliver.db.models.message import Message
+from deliver.db.models.digest import Digest
 
 class BaseDBWrapper(object):
 
     def _create_tables(self):
+
         metadata = MetaData()
         metadata.bind = self.engine
         self.messages = Table('messages', metadata,
@@ -17,4 +22,9 @@ class BaseDBWrapper(object):
                         Column('scheduled_at', DateTime, nullable=False),
                         Column('sent_at', DateTime))
 
+        # mapper(Message, self.messages)
+        # mapper(Digest, self.digests)
+
+        metadata.bind = self.engine
         metadata.create_all(self.engine)
+

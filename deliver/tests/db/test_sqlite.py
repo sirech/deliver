@@ -4,7 +4,9 @@ import email
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError
 
-from deliver.tests.test_base import BaseTest, load_msg, load_all_msg
+from deliver.tests.test_base import BaseTest, load_all_msg
+
+from deliver.converter import UnicodeMessage
 from deliver.db.sqlite import DBWrapper
 
 class SQLiteTest(BaseTest):
@@ -45,15 +47,13 @@ class SQLiteTest(BaseTest):
 
     def test_read_valid_msg(self):
         self._write_msgs()
-        mail = email.message_from_string(self.db.messages.
-                                         select(self.db.messages.c.id == 1).execute()
-                                         .fetchone()['content'])
-        # import difflib
-        # import sys
-        # base = load_msg('sample')
-        # print base.as_string().split('\n')
-        # print '#' * 60
-        # print mail.as_string().split('\n')
+        mail = UnicodeMessage(email.message_from_string(self.db.messages.
+                                                        select(self.db.messages.c.id == 1).execute()
+                                                        .fetchone()['content'].encode('utf-8')))
+
+        self.assertEqual(mail['Subject'], u'BETA 2.0')
+        self.assertEqual(mail['To'], u'sender@host.com')
+        self.assertEqual(mail['From'], u'Name<test@mail.com>')
 
     def test_write_valid_digest(self):
         self.db.digests.insert().values(msg_id=1,
