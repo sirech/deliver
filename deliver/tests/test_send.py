@@ -20,6 +20,7 @@ class SendTest(BaseTest):
         self.assertEqual(sendmail.call_count, 1)
         self.assertEqual(msg['To'], u'email@address.com')
         self.assertEqual(msg['From'], self.sender.get_address())
+        self.assertEqual(msg['Reply-To'], self.sender.get_address())
         self.assertEqual(msg['Subject'], u'[Test] BETA 2.0')
 
     def test_get_address(self):
