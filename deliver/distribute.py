@@ -60,7 +60,7 @@ class Distributor:
 
     def _isvalid(self, msg):
         '''Checks if the message can be delivered.'''
-        return True
+        return self._find_sender_email(msg) != ''
 
     def _find_sender_email(self, msg):
         '''
