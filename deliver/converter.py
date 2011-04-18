@@ -83,9 +83,13 @@ class UnicodeMessage():
         return u''.join(to_unicode(*tupl) for tupl in decode_header(value))
 
     def replace_header(self, name, value):
-        '''Forwards the call to replace_header
+        '''Forwards the call to replace_header.
 
-        The value is passed as a unicode string. This method tries to
+        name the id of the header. If it does not exist yet, it is
+        newly created. This behavior is different from the standard
+        message.
+
+        value is passed as a unicode string. This method tries to
         avoid encoding the value with a Header (i.e when the value is
         an ascii string).
         '''
@@ -94,7 +98,10 @@ class UnicodeMessage():
             header = value.encode('ascii')
         except UnicodeEncodeError:
             header = Header(value.encode('utf-8'), 'UTF-8').encode()
-        self._msg.replace_header(name, header)
+        if self._msg.has_key(name):
+            self._msg.replace_header(name, header)
+        else:
+            self._msg.add_header(name, header)
 
     def get_payload(self, i=None, decode=False):
         '''
