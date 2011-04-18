@@ -30,7 +30,7 @@ class Distributor:
         self._sender = Sender(config)
         self._reader = Reader(config)
         self._mgr = MemberMgr(config)
-        self._store = Store(config)
+        # self._store = Store(config)
         self._cfg = config
         self._manifest = json.load(open('manifest.json'))
 

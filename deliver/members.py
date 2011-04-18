@@ -1,5 +1,6 @@
 import json
 import random
+import codecs
 
 import logging
 import logging.config
@@ -16,17 +17,20 @@ class MemberMgr:
     '''
 
     def __init__(self, config):
-        self._members = self._members = json.load(open(config['members']))
+        self._members = json.load(codecs.open(config['members'], 'r', 'utf-8'))
 
-    def active_members(self, sender = ''):
+    def active_members(self, sender = u''):
         '''
-        Returns the email addresses of all the active members of the
-        list, except of the sender, if one is given.
+        Returns a list with the email addresses of all the active members of the
+        list, as unicode strings.
+
+        Optional sender the sender, who should be excluded from the
+        results.
         '''
         # Normalize
         sender = sender.lower()
         return [member['email'] for member in self._members['members']
-                if member['active'] and member['email'] != sender]
+                if member['active'] and member['email'].lower() != sender]
 
     def find_member(self, email):
         '''
