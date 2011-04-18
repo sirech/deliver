@@ -47,6 +47,24 @@ class DistributeTest(BaseTest):
         self.assertEqual(self.reader.delete.call_count, 3)
         self.assertEqual([id[0] for id, _ in self.reader.delete.call_args_list], messages.keys())
 
+    def test_update_invalid_message(self):
+        self.reader.new_messages.return_value = [1237]
+        self.reader.get.return_value = load_msg('sample7')
+        self.distributor.update()
+
+        self._check_start_stop()
+        self.assertEqual(self.sender.send.call_count, 0)
+        self.assertEqual(self.reader.delete.call_count, 0)
+
+    def test_update_whitelisted_message(self):
+        self.reader.new_messages.return_value = [1237]
+        self.reader.get.return_value = load_msg('sample8')
+        self.distributor.update()
+
+        self._check_start_stop()
+        self.assertEqual(self.sender.send.call_count, 1)
+        self.reader.delete.assert_called_once_with(1237)
+
     def _check_start_stop(self):
         self.reader.connect.assert_called_once_with()
         self.reader.new_messages.assert_called_once_with()
@@ -58,6 +76,12 @@ class DistributeTest(BaseTest):
 
     def test_isvalid(self):
         self.assertTrue(self.distributor._isvalid(self.msg))
+
+    def test_isvalid_whitelist(self):
+        self.assertTrue(self.distributor._isvalid(load_msg('sample8')))
+
+    def test_isvalid_false(self):
+        self.assertFalse(self.distributor._isvalid(load_msg('sample7')))
 
     def test_find_sender_email(self):
         self.assertEqual(self.distributor._find_sender_email(self.msg),
