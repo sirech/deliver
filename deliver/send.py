@@ -34,6 +34,7 @@ class Sender:
         '''
         msg.replace_header('Subject', self._prepare_subject(msg['Subject']))
         msg.replace_header('From', self.get_address())
+        msg.replace_header('Reply-To', self.get_address())
         for recipient in recipients:
             logging.debug('Sending message to %s' % recipient)
             s = smtplib.SMTP(self._cfg['smtp_server'])
