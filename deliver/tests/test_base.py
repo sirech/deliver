@@ -13,7 +13,8 @@ def load_all_msg():
     return [load_msg(fileName) for fileName in ['sample', 'sample2',
                                                 'sample3',
                                                 'sample4', # content base64
-                                                'sample5'  # content base64 utf-8
+                                                'sample5', # content base64 utf-8
+                                                'sample6', # empty content
                                                 ]]
 
 class BaseTest(unittest.TestCase):

@@ -34,6 +34,11 @@ class ConverterTest(BaseTest):
         self.assertEqual(self.msg['Subject'], s)
         self.assertEqual(self.msg._msg['Subject'], '=?utf-8?q?Un_d=C3=ADa_de_c=C3=B3lera?=')
 
+    def test_replace_header_no_header(self):
+        s = u'quoted-printable'
+        self.msg.replace_header('Content-Transfer-Encoding', s)
+        self.assertEqual(self.msg['Content-Transfer-Encoding'], s)
+
     def _test_get(self, s, encoded):
         self.assertEqual(self.get_text(decode=True), s)
         self.assertEqual(self.get_text(), encoded)
@@ -68,6 +73,11 @@ class ConverterTest(BaseTest):
         self.msg = load_msg('sample5')
         self._test_set(s, u'Con cien ca=C3=B1ones por banda, viento en popa a toda vela')
 
+    def test_set_payload_empty(self):
+        s = u'Con cien cañones por banda, viento en popa a toda vela'
+        self.msg = load_msg('sample6')
+        self._test_set(s, u'Con cien ca=F1ones por banda, viento en popa a toda vela')
+
     def test_get_payload(self):
         self.msg = load_msg('sample')
         s = u'La direcci=F3n ha cambiado como pod=E9is comprobar en'
@@ -85,3 +95,7 @@ class ConverterTest(BaseTest):
     def test_get_payload_base64_utf8(self):
         self.msg = load_msg('sample5')
         self._test_get(u'á', u'w6E=')
+
+    def test_get_payload_empty(self):
+        self.msg = load_msg('sample6')
+        self._test_get(u'\n', u'\n')
