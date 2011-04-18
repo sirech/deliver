@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from test_base import BaseTest, load_msg
+from test_base import BaseTest, load_msg, get_msg
 from mock import Mock
 
 from deliver.distribute import Distributor
@@ -17,11 +17,28 @@ class DistributeTest(BaseTest):
         self.distributor._reader = self.reader
         self.msg = load_msg('sample')
 
+    def _check_start_stop(self):
+        self.reader.connect.assert_called_once_with()
+        self.reader.new_messages.assert_called_once_with()
+        self.reader.disconnect.assert_called_once_with()
+
+    def _check_interactions(self, *ids):
+        self.assertEqual(self.sender.send.call_count, len(ids))
+        self.assertEqual(self.reader.delete.call_count, len(ids))
+        self.assertEqual(tuple(id[0] for id, _ in self.reader.delete.call_args_list), ids)
+
+    def _check_archived(self, *msgs):
+        for msg in msgs:
+            parsed_msg = get_msg(self.distributor._store, msg['Message-Id'])
+            self.assertTrue(parsed_msg.received_at is not None)
+            self.assertTrue(parsed_msg.sent_at is not None)
+
     def test_update_nothing_new(self):
         self.reader.new_messages.return_value = []
         self.distributor.update()
 
         self._check_start_stop()
+        self._check_interactions()
 
     def test_update_one_message(self):
         self.reader.new_messages.return_value = [1237]
@@ -29,8 +46,8 @@ class DistributeTest(BaseTest):
         self.distributor.update()
 
         self._check_start_stop()
-        self.assertEqual(self.sender.send.call_count, 1)
-        self.reader.delete.assert_called_once_with(1237)
+        self._check_interactions(1237)
+        self._check_archived(self.msg)
 
     def test_update_multiple_messages(self):
         messages = {
@@ -43,9 +60,8 @@ class DistributeTest(BaseTest):
         self.distributor.update()
 
         self._check_start_stop()
-        self.assertEqual(self.sender.send.call_count, 3)
-        self.assertEqual(self.reader.delete.call_count, 3)
-        self.assertEqual([id[0] for id, _ in self.reader.delete.call_args_list], messages.keys())
+        self._check_interactions(*messages.keys())
+        self._check_archived(*messages.values())
 
     def test_update_invalid_message(self):
         self.reader.new_messages.return_value = [1237]
@@ -53,23 +69,17 @@ class DistributeTest(BaseTest):
         self.distributor.update()
 
         self._check_start_stop()
-        self.assertEqual(self.sender.send.call_count, 0)
-        self.assertEqual(self.reader.delete.call_count, 0)
+        self._check_interactions()
 
     def test_update_whitelisted_message(self):
         self.reader.new_messages.return_value = [1237]
-        self.reader.get.return_value = load_msg('sample8')
+        msg = load_msg('sample8')
+        self.reader.get.return_value = msg
         self.distributor.update()
 
         self._check_start_stop()
-        self.assertEqual(self.sender.send.call_count, 1)
-        self.reader.delete.assert_called_once_with(1237)
-
-    def _check_start_stop(self):
-        self.reader.connect.assert_called_once_with()
-        self.reader.new_messages.assert_called_once_with()
-        self.reader.disconnect.assert_called_once_with()
-
+        self._check_interactions(1237)
+        self._check_archived(msg)
 
     # Check internal methods to make sure things are working
     # smoothly
