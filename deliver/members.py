@@ -30,7 +30,7 @@ class MemberMgr:
         # Normalize
         sender = sender.lower()
         return [member['email'] for member in self._members['members']
-                if member['active'] and member['email'] != sender]
+                if member['active'] and member['email'].lower() != sender]
 
     def find_member(self, email):
         '''
