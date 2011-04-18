@@ -1,3 +1,4 @@
+import os
 import unittest
 import email
 
@@ -24,3 +25,8 @@ class BaseTest(unittest.TestCase):
     def setUp(self):
         from test_data.test_config import py
         self.config = py
+
+    def tearDown(self):
+        super(BaseTest,self).tearDown()
+        if os.path.isfile(self.config['db_name']):
+            os.remove(self.config['db_name'])

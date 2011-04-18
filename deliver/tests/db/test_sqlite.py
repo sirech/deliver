@@ -1,4 +1,3 @@
-import os
 import email
 
 from datetime import datetime
@@ -20,18 +19,17 @@ class SQLiteTest(BaseTest):
         self.db_cfg = { 'name' : self.config['db_name'] }
         self.db = DBWrapper(**self.db_cfg)
 
-    def tearDown(self):
-        super(SQLiteTest,self).tearDown()
-        os.remove(self.db_cfg['name'])
-
     def test_write_very_simple_msg(self):
-        self.db.messages.insert().values(content='a message', received_at=datetime.now()).execute()
+        self.db.messages.insert().values(id='123',
+                                         content='a message', received_at=datetime.now()).execute()
 
     def _write_msgs(self):
         mails = load_all_msg()
         for mail in mails:
-            self.db.messages.insert().values(content=mail.as_string(),
-                                             received_at=datetime.now()).execute()
+            self.db.messages.insert().values(
+                id=mail['Message-Id'],
+                content=mail.as_string(),
+                received_at=datetime.now()).execute()
 
     def test_write_valid_msg(self):
         self._write_msgs()
@@ -47,8 +45,7 @@ class SQLiteTest(BaseTest):
 
     def test_read_valid_msg(self):
         self._write_msgs()
-        mail = UnicodeMessage(email.message_from_string(self.db.messages.
-                                                        select(self.db.messages.c.id == 1).execute()
+        mail = UnicodeMessage(email.message_from_string(self.db.messages.select().execute()
                                                         .fetchone()['content'].encode('utf-8')))
 
         self.assertEqual(mail['Subject'], u'BETA 2.0')

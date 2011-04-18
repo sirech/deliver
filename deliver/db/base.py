@@ -12,7 +12,7 @@ class BaseDBWrapper(object):
         metadata = MetaData()
         metadata.bind = self.engine
         self.messages = Table('messages', metadata,
-                         Column('id', Integer, primary_key=True),
+                         Column('id', String(256), primary_key=True),
                          Column('content', Text, nullable=False),
                          Column('received_at', DateTime, nullable=False),
                          Column('sent_at', DateTime))

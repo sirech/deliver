@@ -25,7 +25,7 @@ class Store:
         self._db = module.DBWrapper(**self._cfg)
 
     def archive(self, msg):
-        m = message.Message(msg.as_string(), datetime.now())
+        m = message.Message(msg['Message-Id'], msg, datetime.now())
         self._db.session.add(m)
         self._db.session.flush()
         return m.id
