@@ -3,6 +3,7 @@ import unittest
 import email
 
 from deliver.converter import UnicodeMessage
+from deliver.db.models import message
 
 def load_msg(fileName):
     '''Loads the message contained in the given file and returns it as
@@ -19,6 +20,17 @@ def load_all_msg():
                                                 'sample7', # invalid sender
                                                 'sample8', # whitelisted sender
                                                 ]]
+
+def get_msg(store, id):
+    '''
+    Retrieve a message from the db.
+
+    store the store object to use to get a connection to the db.
+
+    id the value of the Message-Id header that is used to uniquely
+    identify a message.
+    '''
+    return store._db.session.query(message.Message).get(id)
 
 class BaseTest(unittest.TestCase):
 
