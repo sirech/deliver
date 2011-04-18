@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import os.path, sys, os
-from distutils.sysconfig import get_python_lib
 try:
     from distribute import setup, find_packages
     print "Using distribute...."
@@ -30,6 +28,7 @@ setup(
     # include_package_data=True,
     install_requires=[
         'Mock>=0.7.0',
+        'sqlalchemy>=0.6.0'
         ],
     classifiers=[
         "Development Status :: 3 - Alpha",

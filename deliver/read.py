@@ -3,6 +3,8 @@ import email
 import logging
 import logging.config
 
+from converter import UnicodeMessage
+
 logging.config.fileConfig("logging.conf")
 logging.getLogger('distribute')
 
@@ -41,10 +43,10 @@ class Reader:
         return sorted(int(msg.split(' ')[0]) for msg in msg_list)
 
     def get(self, id):
-        '''Gets the message identified by the given id as a email object.'''
+        '''Gets the message identified by the given id as a UnicodeMessage.'''
         st, lines, _ = self._s.retr(id)
         self._check(st)
-        return email.message_from_string('\n'.join(lines))
+        return UnicodeMessage(email.message_from_string('\r\n'.join(lines)))
 
     def delete(self, id):
         '''Marks the message identified by the given id for removal.'''
@@ -52,11 +54,7 @@ class Reader:
 
     def _check(self, st):
         '''
-        Checks the given return code. If there is an error, it is logged and a message is sent
-        to a debug address, if one exists.
+        Checks the given return code. If there is an error, it is logged.
         '''
-        if not st.startswith('+OK') and 'debug' in self._cfg:
+        if not st.startswith('+OK'):
             logging.error('failed operation: %s' % st)
-            from send import Sender
-            snd = Sender(self._cfg)
-            snd.send_new('DEBUG', st, self._cfg['debug'])

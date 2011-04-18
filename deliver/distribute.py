@@ -7,6 +7,7 @@ import logging.config
 from send import Sender
 from read import Reader
 from members import MemberMgr
+from db.store import Store
 
 logging.config.fileConfig("logging.conf")
 logging.getLogger('distribute')
@@ -29,6 +30,7 @@ class Distributor:
         self._sender = Sender(config)
         self._reader = Reader(config)
         self._mgr = MemberMgr(config)
+        # self._store = Store(config)
         self._cfg = config
         self._manifest = json.load(open('manifest.json'))
 
@@ -90,12 +92,11 @@ class Distributor:
         header = self._create_header(msg)
         footer = self._create_footer(msg)
         for editable in self._find_actual_text(msg):
-            charset = editable.get_content_charset()
-            nl = '\n' if editable.get_content_subtype() == 'plain' else '<br>'
+            nl = u'\n' if editable.get_content_subtype() == 'plain' else u'<br>'
             editable.set_payload((nl * 2).join([
-                        nl.join(header).encode(charset),
-                        EMAIL.sub(anonymize_email, editable.get_payload()),
-                        nl.join(footer).encode(charset)]))
+                        nl.join(header),
+                        EMAIL.sub(anonymize_email, editable.get_payload(decode=True)),
+                        nl.join(footer)]))
 
     def _find_actual_text(self, msg):
         '''Yields all the parts of the message that can be interpreted as text.'''
@@ -124,7 +125,7 @@ class Distributor:
         Creates a footer for the message, returned as a list of strings. The footer contains the
         name of the list, a randomly chosen quote and the program id.
         '''
-        return ['_' * 60,
+        return [u'_' * 60,
                 self._cfg['real_name'],
                 random.choice(self._cfg['quotes']),
                 self._powered_by()]
@@ -136,7 +137,7 @@ class Distributor:
         name = self._manifest['name']
         version = self._manifest['version']
         description = self._manifest['description']
-        return 'Powered by %s %s, %s' % (name, version, description)
+        return u'Powered by %s %s, %s' % (name, version, description)
 
 # Identify the host in an email
 EMAIL = re.compile(r'@([a-zA-Z0-9.-]+\.\w{2,3})')
@@ -149,4 +150,4 @@ def anonymize_email(match):
     chars = 'abcdefghijklmnopqrstuvwxyz'
     replacement = ''.join(random.choice(chars) for i in range(len(match.group(1))))
     logging.debug('replacing %s with %s' % (match.group(1), replacement))
-    return '@%s' % replacement
+    return u'@%s' % replacement

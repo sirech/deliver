@@ -1,23 +1,21 @@
 # -*- coding: utf-8 -*-
-import email
-
-from test_base import BaseTest
+from test_base import BaseTest, load_msg
 from mock import Mock
 
 from deliver.distribute import Distributor
 from deliver.read import Reader
 from deliver.send import Sender
 
-class DistributorTest(BaseTest):
+class DistributeTest(BaseTest):
 
     def setUp(self):
-        super(DistributorTest,self).setUp()
+        super(DistributeTest,self).setUp()
         self.distributor = Distributor(self.config)
         self.sender = Mock(spec=Sender)
         self.distributor._sender = self.sender
         self.reader = Mock(spec=Reader)
         self.distributor._reader = self.reader
-        self.msg = email.message_from_file(open('test_data/sample'))
+        self.msg = load_msg('sample')
 
     def test_update_nothing_new(self):
         self.reader.new_messages.return_value = []
@@ -33,6 +31,21 @@ class DistributorTest(BaseTest):
         self._check_start_stop()
         self.assertEqual(self.sender.send.call_count, 1)
         self.reader.delete.assert_called_once_with(1237)
+
+    def test_update_multiple_messages(self):
+        messages = {
+            1237 : self.msg,
+            1238 : load_msg('sample3'),
+            1239 : load_msg('sample5')
+            }
+        self.reader.new_messages.return_value = messages.keys()
+        self.reader.get.side_effect = lambda id : messages[id]
+        self.distributor.update()
+
+        self._check_start_stop()
+        self.assertEqual(self.sender.send.call_count, 3)
+        self.assertEqual(self.reader.delete.call_count, 3)
+        self.assertEqual([id[0] for id, _ in self.reader.delete.call_args_list], messages.keys())
 
     def _check_start_stop(self):
         self.reader.connect.assert_called_once_with()
@@ -62,15 +75,15 @@ class DistributorTest(BaseTest):
                         self.config['quotes'])
 
     def test_edit_msg_anonymize(self):
-        with_emails = email.message_from_file(open('test_data/sample3'))
+        with_emails = load_msg('sample3')
         self.distributor._edit_msg(with_emails)
-        texts = [msg.get_payload() for msg in with_emails.get_payload()]
+        texts = [msg.get_payload(decode=True) for msg in with_emails.get_payload()]
         for text in texts:
             self.assertTrue('sender@' in text)
             self.assertFalse('@host.com' in text)
 
     def test_create_header_special_chars(self):
-        simple_sender = email.message_from_file(open('test_data/sample2'))
+        simple_sender = load_msg('sample2')
         self.config['introductions'] = [ u'salté' ]
         self.assertEqual(self.distributor._create_header(simple_sender),
                          [u'MIA salté:'])
