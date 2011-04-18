@@ -1,4 +1,7 @@
 import sys
+from datetime import datetime
+
+from deliver.db.models import message
 
 DB = {
     'sqlite' : 'sqlite'
@@ -22,5 +25,7 @@ class Store:
         self._db = module.DBWrapper(**self._cfg)
 
     def archive(self, msg):
-        pass
-
+        m = message.Message(msg.as_string(), datetime.now())
+        self._db.session.add(m)
+        self._db.session.flush()
+        return m.id
