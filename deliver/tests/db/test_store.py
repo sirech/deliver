@@ -78,11 +78,28 @@ class StoreTest(BaseTest):
         parsed_msg = self._get_msg(id)
         self.assertEqual([d.send_to for d in parsed_msg.digests], addresses)
 
-    def test_users_with_pending_digests_empty(self):
-        self.assertEqual(self.store.users_with_pending_digests(), set())
+    def test_messages_for_user_empty(self):
+        self.assertEqual(self.store.messages_for_user(u'test@mail.com'), [])
 
     def _digest_msgs(self, fileList, *addresses):
         return [self._digest_msg(f, *addresses) for f in fileList]
+
+    def test_messages_for_user(self):
+        '''
+        Generate digests for two users and four messages. The first
+        two messages are marked as sent, so the pending messages
+        should be the last two.
+        '''
+        addresses = [u'external@mail.com', u'test@mail.com']
+        self._digest_msgs(['sample', 'sample2'], *addresses)
+        self.store.mark_digest_as_sent(addresses[0])
+        msgs = self._digest_msgs(['sample3', 'sample4'], *addresses)
+        parsed_msgs = self.store.messages_for_user(addresses[0])
+        self.assertEqual([m['Message-Id'] for m in parsed_msgs], [id for id, _ in msgs])
+        self.assertEqual(parsed_msgs[1].as_string(), msgs[1][1].as_string())
+
+    def test_users_with_pending_digests_empty(self):
+        self.assertEqual(self.store.users_with_pending_digests(), set())
 
     def test_users_with_pending_digests(self):
         '''

@@ -24,7 +24,14 @@ def choose_backend(backend_name):
 
 class Store:
     '''
-    This class is responsible for storing messages in a DB.
+    This class is responsible for interacting with the DB.
+
+    It provides an interface that allows to archive messages, retrieve
+    them, and also work with digests.
+
+    It is implemented with a number of model classes that represent
+    the tables in the DB. This model instances are generally not
+    passed to the caller.
     '''
 
     def __init__(self, config):
@@ -99,6 +106,28 @@ class Store:
         self._db.session.add_all(digests)
         self._db.session.flush()
 
+    def _pending_digests(self, recipient):
+        '''
+        Returns all the digests that are still pending for the given
+        user.
+        '''
+        assert isinstance(recipient, unicode)
+        return self._db.session.query(digest.Digest) \
+            .filter(and_(digest.Digest.send_to==recipient, digest.Digest.sent_at==None)) \
+            .all()
+
+    def messages_for_user(self, recipient):
+        '''
+        Returns all the messages which have a pending digest for the
+        given user. The messages are returned as UnicodeMessage
+        objects. They are ordered by the time at which they were
+        scheduled.
+
+        recipient the email address for the user
+        '''
+        digests = self._pending_digests(recipient)
+        return [d.msg.parsed_content for d in digests]
+
     def users_with_pending_digests(self):
         '''
         Returns a set with email addresses that have pending digests.
@@ -118,10 +147,7 @@ class Store:
 
         returns the list of ids of the messages that were set as sent
         '''
-        assert isinstance(recipient, unicode)
-        digests = self._db.session.query(digest.Digest) \
-            .filter(and_(digest.Digest.send_to==recipient, digest.Digest.sent_at==None)) \
-            .all()
+        digests = self._pending_digests(recipient)
         time = datetime.now()
         for d in digests:
             d.sent_at = time
