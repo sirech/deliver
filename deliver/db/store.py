@@ -2,7 +2,7 @@ import sys
 from datetime import datetime
 
 from deliver.converter import UnicodeMessage
-from deliver.db.models import message
+from deliver.db.models import message, digest
 
 DB = {
     'sqlite' : 'sqlite'
@@ -77,6 +77,28 @@ class Store:
         assert m.sent_at is None
         m.sent_at = datetime.now()
         self._db.session.flush()
+
+    def digest(self, msg_id, *recipients):
+        '''
+        For every recipient, stores a digest notification in the db
+        for the given message.
+
+        msg_id the id of the message for the digest
+
+        *recipients the list of recipients of the digest
+
+        It is important to note that this method cannot be used before
+        a message has been store using the archive method.
+        '''
+        assert isinstance(msg_id, unicode)
+        for recipient in recipients:
+            assert isinstance(recipient, unicode)
+        time = datetime.now()
+        digests = [digest.Digest(msg_id, recipient, time) for recipient in recipients]
+        self._db.session.add_all(digests)
+        self._db.session.flush()
+
+    # DEBUG
 
     def connection(self):
         '''Gets a connection to the db that can run raw SQL. This

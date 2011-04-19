@@ -57,7 +57,9 @@ class Distributor:
         '''
         self._edit_msg(msg)
         id = self._store.archive(msg)
-        self._sender.send(msg, *self._mgr.active_members(self._find_sender_email(msg)))
+        sender = self._find_sender_email(msg)
+        self._sender.send(msg, *self._mgr.active_members(sender))
+        self._store.digest(id, *self._mgr.digest_members(sender))
         self._store.mark_as_sent(id)
 
     def _isvalid(self, msg):

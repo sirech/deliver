@@ -1,6 +1,6 @@
 from sqlalchemy import *
 
-from sqlalchemy.orm import mapper, clear_mappers, create_session
+from sqlalchemy.orm import mapper, clear_mappers, create_session, relationship, backref
 
 from deliver.db.models.message import Message
 from deliver.db.models.digest import Digest
@@ -18,7 +18,8 @@ class BaseDBWrapper(object):
                          Column('sent_at', DateTime))
 
         self.digests = Table('digests', metadata,
-                        Column('msg_id', Integer, ForeignKey('messages.id'), primary_key=True),
+                        Column('msg_id', String(256), ForeignKey('messages.id', ondelete='cascade'),
+                               primary_key=True),
                         Column('send_to', String(256), primary_key=True),
                         Column('scheduled_at', DateTime, nullable=False),
                         Column('sent_at', DateTime))
@@ -27,7 +28,9 @@ class BaseDBWrapper(object):
         metadata.create_all(self.engine)
 
         clear_mappers()
-        mapper(Message, self.messages)
+        mapper(Message, self.messages, properties={
+                'digests': relationship(Digest, backref='msg')
+                })
         mapper(Digest, self.digests)
 
         self.session = create_session()

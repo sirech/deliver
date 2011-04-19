@@ -19,9 +19,12 @@ class SQLiteTest(BaseTest):
         self.db_cfg = { 'name' : self.config['db_name'] }
         self.db = DBWrapper(**self.db_cfg)
 
-    def test_write_very_simple_msg(self):
+    def _write_stub_msg(self):
         self.db.messages.insert().values(id='123',
                                          content='a message', received_at=datetime.now()).execute()
+
+    def test_write_very_simple_msg(self):
+        self._write_stub_msg()
 
     def _write_msgs(self):
         mails = load_all_msg()
@@ -53,7 +56,8 @@ class SQLiteTest(BaseTest):
         self.assertEqual(mail['From'], u'Name<test@mail.com>')
 
     def test_write_valid_digest(self):
-        self.db.digests.insert().values(msg_id=1,
-                                        send_to='test@mail.com',
+        self._write_stub_msg()
+        self.db.digests.insert().values(msg_id='123',
+                                        send_to=u'test@mail.com',
                                         scheduled_at=datetime.now()).execute()
 
