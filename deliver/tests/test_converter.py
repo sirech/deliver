@@ -90,7 +90,7 @@ class ConverterTest(BaseTest):
 
     def test_get_payload_base64(self):
         self.msg = load_msg('sample4')
-        self._test_get(u'á', u'4Qo=')
+        self._test_get(u'á\n', u'4Qo=')
 
     def test_get_payload_base64_utf8(self):
         self.msg = load_msg('sample5')
