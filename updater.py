@@ -2,6 +2,6 @@
 # config file, it takes the config.py file that is in the same
 # directory.
 from config import py
-from deliver.distribute import Distributor
-d = Distributor(py)
+from deliver.distribute import OnlineDistributor
+d = OnlineDistributor(py)
 d.update()

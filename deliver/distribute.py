@@ -14,25 +14,86 @@ logging.getLogger('distribute')
 
 BASIC_EMAIL = re.compile(r'<(.+@.+\..+)>')
 
-class Distributor:
+class Distributor(object):
     '''
     This class is responsible for distributing mails to the members of the list, making sure
     the right members get mails and processing the mails according to the configuration.
 
-    There is one public method, update. When it is called, the server is polled. If new mails have
-    arrived, they are processed and resent to the members of the list. Afterward, the mails
-    are deleted, but only if the resend process finished successfully.
+    The actual process of distributing emails, be it online or offline, is left to subclasses.
 
     Most options are configurable via json configuration files.
     '''
 
     def __init__(self, config):
         self._sender = Sender(config)
-        self._reader = Reader(config)
         self._mgr = MemberMgr(config)
         self._store = Store(config)
         self._cfg = config
         self._manifest = json.load(open('manifest.json'))
+
+    def _isvalid(self, msg):
+        '''
+        Checks if the message can be delivered.
+
+        The rules for delivering a message are:
+        - Valid if:
+        - comes from a member of the list
+        - comes from a whitelisted address
+        - Invalid if:
+        - comes from a blacklisted address
+        - comes from any other address
+        '''
+        email = self._find_sender_email(msg)
+        if self._mgr.isblacklisted(email):
+            return False
+        return self._mgr.find_member(email) is not None or self._mgr.iswhitelisted(email)
+
+    def _find_sender_email(self, msg):
+        '''
+        Finds the email of the sender of the given message. The *From* and *Return-Path* headers
+        from the message are searched. An empty string is returned in case the email
+        cannot be found.
+        '''
+        candidates = [ msg['From'], msg['Return-Path']]
+        for candidate in candidates:
+            match = BASIC_EMAIL.search(candidate)
+            if match and len(match.groups()) == 1:
+                logging.debug('_find_sender_email found %s' % match.groups())
+                # Normalize
+                return match.group(1).lower()
+        logging.debug('_find_sender_email did not find the email in %s' % candidates)
+        return ''
+
+    def _find_actual_text(self, msg):
+        '''Yields all the parts of the message that can be interpreted as text.'''
+        for part in msg.walk():
+            if 'text' == part.get_content_maintype():
+                yield part
+
+    def _create_header(self, msg):
+        '''
+        Creates a header for the message, returned as a list of strings. The header contains the
+        name of the sender and an introduction message.
+        '''
+        member = self._mgr.find_member(self._find_sender_email(msg))
+        if member is not None:
+            header = self._mgr.choose_name(member) + ' ' + self._choose_intro() + ':'
+            logging.debug('_create_header produced: %s' % header)
+            return [header]
+        return ['']
+
+class OnlineDistributor(Distributor):
+    '''
+    Distributes mails in "real-time".
+
+    There is one public method, update. When it is called, the server is polled. If new mails have
+    arrived, they are processed and resent to the members of the list. Afterward, the mails
+    are deleted, but only if the resend process finished successfully.
+    '''
+
+    def __init__(self, config):
+        super(OnlineDistributor,self).__init__(config)
+        self._reader = Reader(config)
 
     def update(self):
         '''
@@ -62,39 +123,6 @@ class Distributor:
         self._store.digest(id, *self._mgr.digest_members(sender))
         self._store.mark_as_sent(id)
 
-    def _isvalid(self, msg):
-        '''
-        Checks if the message can be delivered.
-
-        The rules for delivering a message are:
-         - Valid if:
-           - comes from a member of the list
-           - comes from a whitelisted address
-         - Invalid if:
-           - comes from a blacklisted address
-           - comes from any other address
-        '''
-        email = self._find_sender_email(msg)
-        if self._mgr.isblacklisted(email):
-            return False
-        return self._mgr.find_member(email) is not None or self._mgr.iswhitelisted(email)
-
-    def _find_sender_email(self, msg):
-        '''
-        Finds the email of the sender of the given message. The *From* and *Return-Path* headers
-        from the message are searched. An empty string is returned in case the email
-        cannot be found.
-        '''
-        candidates = [ msg['From'], msg['Return-Path']]
-        for candidate in candidates:
-            match = BASIC_EMAIL.search(candidate)
-            if match and len(match.groups()) == 1:
-                logging.debug('_find_sender_email found %s' % match.groups())
-                # Normalize
-                return match.group(1).lower()
-        logging.debug('_find_sender_email did not find the email in %s' % candidates)
-        return ''
-
     def _edit_msg(self, msg):
         '''
         Processes a message and returns it. The following steps are taken for each part of the
@@ -114,24 +142,6 @@ class Distributor:
                         nl.join(header),
                         EMAIL.sub(anonymize_email, editable.get_payload(decode=True)),
                         nl.join(footer)]))
-
-    def _find_actual_text(self, msg):
-        '''Yields all the parts of the message that can be interpreted as text.'''
-        for part in msg.walk():
-            if 'text' == part.get_content_maintype():
-                yield part
-
-    def _create_header(self, msg):
-        '''
-        Creates a header for the message, returned as a list of strings. The header contains the
-        name of the sender and an introduction message.
-        '''
-        member = self._mgr.find_member(self._find_sender_email(msg))
-        if member is not None:
-            header = self._mgr.choose_name(member) + ' ' + self._choose_intro() + ':'
-            logging.debug('_create_header produced: %s' % header)
-            return [header]
-        return ['']
 
     def _choose_intro(self):
         '''Randomly chooses an introduction text from the configuration.'''

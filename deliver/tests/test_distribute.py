@@ -2,7 +2,7 @@
 from test_base import BaseTest, load_msg, get_msg
 from mock import Mock
 
-from deliver.distribute import Distributor
+from deliver.distribute import OnlineDistributor
 from deliver.read import Reader
 from deliver.send import Sender
 
@@ -10,7 +10,7 @@ class DistributeTest(BaseTest):
 
     def setUp(self):
         super(DistributeTest,self).setUp()
-        self.distributor = Distributor(self.config)
+        self.distributor = OnlineDistributor(self.config)
         self.sender = Mock(spec=Sender)
         self.distributor._sender = self.sender
         self.reader = Mock(spec=Reader)
