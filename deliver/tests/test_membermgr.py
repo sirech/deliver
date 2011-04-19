@@ -40,6 +40,12 @@ class MemberMgrTest(BaseTest):
     def test_iswhitelisted(self):
         self.assertTrue(self.memberMgr.iswhitelisted('whitelist@HOST.com'))
 
+    def test_isblacklisted_fail(self):
+        self.assertFalse(self.memberMgr.isblacklisted(''))
+
+    def test_isblacklisted(self):
+        self.assertTrue(self.memberMgr.isblacklisted('blacklist@HOST.com'))
+
     def test_choose_name_no_aliases(self):
         self.assertEquals(self.memberMgr.choose_name(
                 self.memberMgr.find_member(u'inactivE@mail.com')), u'MIA')

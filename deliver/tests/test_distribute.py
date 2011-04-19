@@ -81,6 +81,14 @@ class DistributeTest(BaseTest):
         self._check_interactions(1237)
         self._check_archived(msg)
 
+    def test_update_blacklisted_message(self):
+        self.reader.new_messages.return_value = [1237]
+        self.reader.get.return_value = load_msg('sample9')
+        self.distributor.update()
+
+        self._check_start_stop()
+        self._check_interactions()
+
     # Check internal methods to make sure things are working
     # smoothly
 
@@ -89,6 +97,9 @@ class DistributeTest(BaseTest):
 
     def test_isvalid_whitelist(self):
         self.assertTrue(self.distributor._isvalid(load_msg('sample8')))
+
+    def test_isvalid_blacklist(self):
+        self.assertFalse(self.distributor._isvalid(load_msg('sample9')))
 
     def test_isvalid_false(self):
         self.assertFalse(self.distributor._isvalid(load_msg('sample7')))

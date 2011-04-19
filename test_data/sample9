@@ -1,0 +1,20 @@
+MIME-Version: 1.0
+Received: by 10.52.165.5 with HTTP; Mon, 4 Apr 2011 14:56:46 -0700 (PDT)
+Date: Mon, 4 Apr 2011 23:56:46 +0200
+Message-ID: <BANLkTind+2cWMru4P-XYGLSdMe=6tPomTw9@mail.gmail.com>
+Subject: TEST 2
+From: =?ISO-8859-1?Q?Blacklist?= <blacklist@host.com>
+To: sender@host.com
+Content-Type: multipart/alternative; boundary=20cf3071cc68048f2004a01ed6db
+
+--20cf3071cc68048f2004a01ed6db
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+
+w6E=
+--20cf3071cc68048f2004a01ed6db
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: base64
+
+w6E=
+--20cf3071cc68048f2004a01ed6db--

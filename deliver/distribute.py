@@ -65,6 +65,8 @@ class Distributor:
     def _isvalid(self, msg):
         '''Checks if the message can be delivered.'''
         email = self._find_sender_email(msg)
+        if self._mgr.isblacklisted(email):
+            return False
         return self._mgr.find_member(email) is not None or self._mgr.iswhitelisted(email)
 
     def _find_sender_email(self, msg):

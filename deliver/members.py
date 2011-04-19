@@ -82,6 +82,11 @@ class MemberMgr:
         whitelist.'''
         return addr.lower() in self._members['whitelist']
 
+    def isblacklisted(self, addr):
+        '''Checks if the given email address appears in the
+        blacklist.'''
+        return addr.lower() in self._members['blacklist']    
+
     def choose_name(self, member):
         '''Randomly chooses a name for the given member, between her
         name and aliases.'''
