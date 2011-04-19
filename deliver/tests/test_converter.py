@@ -2,6 +2,7 @@
 from test_base import BaseTest, load_msg
 
 class ConverterTest(BaseTest):
+    '''Tests for the UnicodeMessage class'''
 
     def setUp(self):
         super(ConverterTest,self).setUp()

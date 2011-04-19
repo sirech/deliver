@@ -1,6 +1,6 @@
 import smtplib
 
-from converter import UnicodeMessage, SummaryMessage
+from converter import UnicodeMessage
 
 import logging
 import logging.config
@@ -20,14 +20,14 @@ class Sender:
         '''
         Sends the given UnicodeMessage to each of the specified recipients.
         '''
-        assert isinstance(msg, UnicodeMessage) or isinstance(msg, SummaryMessage)
+        assert isinstance(msg, UnicodeMessage)
         for recipient in recipients:
             assert isinstance(recipient, unicode)
         self._send(msg, *recipients)
 
     def _send(self, msg, *recipients):
         '''
-        Sends the given UnicodeMessage or SummaryMessage to each of
+        Sends the given UnicodeMessage to each of
         the specified recipients.
 
         The emails are sent from the specified server, using the specified address. The subject

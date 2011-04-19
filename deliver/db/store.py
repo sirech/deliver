@@ -136,7 +136,7 @@ class Store:
             .filter(digest.Digest.sent_at==None) \
             .order_by(digest.Digest.scheduled_at) \
             .all()
-        return set(digest.send_to for digest in digests)
+        return set(d.send_to for d in digests)
 
     def mark_digest_as_sent(self, recipient):
         '''

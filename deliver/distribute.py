@@ -7,7 +7,7 @@ import logging.config
 from send import Sender
 from read import Reader
 from members import MemberMgr
-from converter import SummaryMessage
+from converter import DigestMessage
 from db.store import Store
 
 logging.config.fileConfig("logging.conf")
@@ -189,7 +189,7 @@ class OfflineDistributor(Distributor):
         users = self._store.users_with_pending_digests()
         for user in users:
             messages = self._store.messages_for_user(user)
-            msg = SummaryMessage(messages)
+            msg = DigestMessage(messages)
             self._sender.send(msg, user)
             self._store.mark_digest_as_sent(user)
         logging.debug('update is finished')
