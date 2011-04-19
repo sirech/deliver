@@ -7,6 +7,7 @@ import logging.config
 from send import Sender
 from read import Reader
 from members import MemberMgr
+from converter import SummaryMessage
 from db.store import Store
 
 logging.config.fileConfig("logging.conf")
@@ -165,6 +166,34 @@ class OnlineDistributor(Distributor):
         version = self._manifest['version']
         description = self._manifest['description']
         return u'Powered by %s %s, %s' % (name, version, description)
+
+class OfflineDistributor(Distributor):
+    '''
+    Distributes deferred mails (digests)
+
+    There is one public method, update. When it is called, the list of
+    users with pending emails is retrieved from the Store. For each of
+    these users, the pending mails are retrieved. A digest mail is
+    built from them and sent to the user.
+    '''
+
+    def __init__(self, config):
+        super(OfflineDistributor,self).__init__(config)
+
+    def update(self):
+        '''
+        Update the pending digests. For each user with pending
+        digests, a mail is built and sent to them.
+        '''
+        logging.debug('update is called')
+        users = self._store.users_with_pending_digests()
+        for user in users:
+            messages = self._store.messages_for_user(user)
+            msg = SummaryMessage(messages)
+            self._sender.send(msg, user)
+            self._store.mark_digest_as_sent(user)
+        logging.debug('update is finished')
+        return len(users) != 0
 
 # Identify the host in an email
 EMAIL = re.compile(r'@([a-zA-Z0-9.-]+\.\w{2,3})')

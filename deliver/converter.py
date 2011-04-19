@@ -139,3 +139,10 @@ class UnicodeMessage():
 
     def __getattr__(self, name):
         return getattr(self._msg, name)
+
+class SummaryMessage(object):
+
+    def __init__(self, msg_list):
+        pass
+
+

@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy.sql.expression import and_
 
 from deliver.converter import UnicodeMessage
-from deliver.db.models import message, digest
+from models import message, digest
 
 DB = {
     'sqlite' : 'sqlite'

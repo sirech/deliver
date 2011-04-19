@@ -6,10 +6,10 @@ from deliver.distribute import OnlineDistributor
 from deliver.read import Reader
 from deliver.send import Sender
 
-class DistributeTest(BaseTest):
+class OnlineDistributeTest(BaseTest):
 
     def setUp(self):
-        super(DistributeTest,self).setUp()
+        super(OnlineDistributeTest,self).setUp()
         self.distributor = OnlineDistributor(self.config)
         self.sender = Mock(spec=Sender)
         self.distributor._sender = self.sender
@@ -35,7 +35,7 @@ class DistributeTest(BaseTest):
 
     def test_update_nothing_new(self):
         self.reader.new_messages.return_value = []
-        self.distributor.update()
+        self.assertFalse(self.distributor.update())
 
         self._check_start_stop()
         self._check_interactions()
@@ -43,7 +43,7 @@ class DistributeTest(BaseTest):
     def test_update_one_message(self):
         self.reader.new_messages.return_value = [1237]
         self.reader.get.return_value = self.msg
-        self.distributor.update()
+        self.assertTrue(self.distributor.update())
 
         self._check_start_stop()
         self._check_interactions(1237)
@@ -57,7 +57,7 @@ class DistributeTest(BaseTest):
             }
         self.reader.new_messages.return_value = messages.keys()
         self.reader.get.side_effect = lambda id : messages[id]
-        self.distributor.update()
+        self.assertTrue(self.distributor.update())
 
         self._check_start_stop()
         self._check_interactions(*messages.keys())
@@ -66,7 +66,7 @@ class DistributeTest(BaseTest):
     def test_update_invalid_message(self):
         self.reader.new_messages.return_value = [1237]
         self.reader.get.return_value = load_msg('sample7')
-        self.distributor.update()
+        self.assertTrue(self.distributor.update())
 
         self._check_start_stop()
         self._check_interactions()
@@ -75,7 +75,7 @@ class DistributeTest(BaseTest):
         self.reader.new_messages.return_value = [1237]
         msg = load_msg('sample8')
         self.reader.get.return_value = msg
-        self.distributor.update()
+        self.assertTrue(self.distributor.update())
 
         self._check_start_stop()
         self._check_interactions(1237)
@@ -84,7 +84,7 @@ class DistributeTest(BaseTest):
     def test_update_blacklisted_message(self):
         self.reader.new_messages.return_value = [1237]
         self.reader.get.return_value = load_msg('sample9')
-        self.distributor.update()
+        self.assertTrue(self.distributor.update())
 
         self._check_start_stop()
         self._check_interactions()
