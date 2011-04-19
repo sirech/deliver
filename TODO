@@ -5,7 +5,6 @@
 - forbidden words
 
 - whitelist
- - add to whitelist
  - hold message
  
 - daemon
@@ -18,3 +17,5 @@
 - download links and attach them
 
 - red button, purge system, blacklist
+
+- ruby dashboard: add to (black/white)list, monitor db

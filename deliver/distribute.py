@@ -63,7 +63,17 @@ class Distributor:
         self._store.mark_as_sent(id)
 
     def _isvalid(self, msg):
-        '''Checks if the message can be delivered.'''
+        '''
+        Checks if the message can be delivered.
+
+        The rules for delivering a message are:
+         - Valid if:
+           - comes from a member of the list
+           - comes from a whitelisted address
+         - Invalid if:
+           - comes from a blacklisted address
+           - comes from any other address
+        '''
         email = self._find_sender_email(msg)
         if self._mgr.isblacklisted(email):
             return False

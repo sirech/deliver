@@ -1,5 +1,6 @@
 import sys
 from datetime import datetime
+from sqlalchemy.sql.expression import and_
 
 from deliver.converter import UnicodeMessage
 from deliver.db.models import message, digest
@@ -97,6 +98,35 @@ class Store:
         digests = [digest.Digest(msg_id, recipient, time) for recipient in recipients]
         self._db.session.add_all(digests)
         self._db.session.flush()
+
+    def users_with_pending_digests(self):
+        '''
+        Returns a set with email addresses that have pending digests.
+        '''
+        digests = self._db.session.query(digest.Digest) \
+            .filter(digest.Digest.sent_at==None) \
+            .order_by(digest.Digest.scheduled_at) \
+            .all()
+        return set(digest.send_to for digest in digests)
+
+    def mark_digest_as_sent(self, recipient):
+        '''
+        Marks all the open digests for the given user as sent.
+
+        recipient the email address for the user whose digests are to
+        be marked as sent.
+
+        returns the list of ids of the messages that were set as sent
+        '''
+        assert isinstance(recipient, unicode)
+        digests = self._db.session.query(digest.Digest) \
+            .filter(and_(digest.Digest.send_to==recipient, digest.Digest.sent_at==None)) \
+            .all()
+        time = datetime.now()
+        for d in digests:
+            d.sent_at = time
+        self._db.session.flush()
+        return [d.msg_id for d in digests]
 
     # DEBUG
 

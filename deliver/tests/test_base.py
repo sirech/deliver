@@ -3,7 +3,7 @@ import unittest
 import email
 
 from deliver.converter import UnicodeMessage
-from deliver.db.models import message
+from deliver.db.models import message, digest
 
 def load_msg(fileName):
     '''Loads the message contained in the given file and returns it as
@@ -32,6 +32,14 @@ def get_msg(store, id):
     identify a message.
     '''
     return store._db.session.query(message.Message).get(id)
+
+def get_digests(store, address):
+    '''
+    Retrieve all the digests for the given address.
+
+    address the email address whose digests are to be retrieved.
+    '''
+    return store._db.session.query(digest.Digest).filter(digest.Digest.send_to==address)
 
 class BaseTest(unittest.TestCase):
 
