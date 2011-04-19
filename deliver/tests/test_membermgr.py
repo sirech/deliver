@@ -11,11 +11,15 @@ class MemberMgrTest(BaseTest):
 
     def test_active_members(self):
         self.assertEqual(self.memberMgr.active_members(sender = u'TEST@mail.com'),
-                          [u'loser@mail.com', u'Stranger@mail.com'])
+                         [u'loser@mail.com'])
 
     def test_active_members_uppercase(self):
         self.assertEqual(self.memberMgr.active_members(sender = u'STRANGER@mail.com'),
-                          [u'test@mail.com', u'loser@mail.com'])
+                         [u'test@mail.com', u'loser@mail.com'])
+
+    def test_digest_members(self):
+        self.assertEqual(self.memberMgr.digest_members(sender = u'TEST@mail.com'),
+                         [u'Stranger@mail.com'])
 
     def test_find_member_not_found(self):
         self.assertEqual(self.memberMgr.find_member(''), None)

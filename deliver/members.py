@@ -19,18 +19,47 @@ class MemberMgr:
     def __init__(self, config):
         self._members = json.load(codecs.open(config['members'], 'r', 'utf-8'))
 
+    def _member_query(self, exclude = u'', active=True, digest=False):
+        '''
+        Returns a generator will all the members that fulfill the given conditions.
+
+        optional exclude the address to exclude from the results
+
+        optional active whether the user should be active or not
+
+        optional digest whether the user should receive messages as a digest or not
+
+        If a member does not contain one of the attributes used for
+        the query (active, digest), it is considered to have a False
+        value.
+        '''
+        # Normalize
+        exclude = exclude.lower()
+        return (member['email'] for member in self._members['members']
+                if member.get('active', False) is active and member.get('digest', False) is digest
+                and member['email'].lower() != exclude)
+
     def active_members(self, sender = u''):
         '''
-        Returns a list with the email addresses of all the active members of the
-        list, as unicode strings.
+        Returns a list with the email addresses of all the active
+        members of the list, as unicode strings. Users in digest mode
+        are excluded.
 
         Optional sender the sender, who should be excluded from the
         results.
         '''
-        # Normalize
-        sender = sender.lower()
-        return [member['email'] for member in self._members['members']
-                if member['active'] and member['email'].lower() != sender]
+        return list(self._member_query(exclude=sender))
+
+    def digest_members(self, sender = u''):
+        '''
+        Returns a list with the email addresses of all the active
+        members of the list that are also digest users, as unicode
+        strings.
+
+        Optional sender the sender, who should be excluded from the
+        results.
+        '''
+        return list(self._member_query(exclude=sender, digest=True))
 
     def find_member(self, email):
         '''

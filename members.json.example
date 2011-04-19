@@ -16,6 +16,7 @@
             "email" : "Stranger@mail.com",
             "name" : "Niño Él",
             "aliases" : ["Sí", "Quizás"],
+            "digest" : true,             
             "active" : true
         },
         {
