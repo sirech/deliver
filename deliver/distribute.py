@@ -1,8 +1,6 @@
 import json
 import re
 import random
-import logging
-import logging.config
 
 from send import Sender
 from read import Reader
@@ -10,8 +8,8 @@ from members import MemberMgr
 from converter import DigestMessage
 from db.store import Store
 
-logging.config.fileConfig("logging.conf")
-logging.getLogger('distribute')
+import logging
+logging.getLogger(__name__)
 
 BASIC_EMAIL = re.compile(r'<(.+@.+\..+)>')
 
@@ -59,10 +57,10 @@ class Distributor(object):
         for candidate in candidates:
             match = BASIC_EMAIL.search(candidate)
             if match and len(match.groups()) == 1:
-                logging.debug('_find_sender_email found %s' % match.groups())
+                logging.debug('_find_sender_email found %s', match.group(1))
                 # Normalize
                 return match.group(1).lower()
-        logging.debug('_find_sender_email did not find the email in %s' % candidates)
+        logging.debug('_find_sender_email did not find the email in %s', candidates)
         return ''
 
     def _find_actual_text(self, msg):
@@ -79,7 +77,7 @@ class Distributor(object):
         member = self._mgr.find_member(self._find_sender_email(msg))
         if member is not None:
             header = self._mgr.choose_name(member) + ' ' + self._choose_intro() + ':'
-            logging.debug('_create_header produced: %s' % header)
+            logging.debug('_create_header produced: %s',  header)
             return [header]
         return ['']
 

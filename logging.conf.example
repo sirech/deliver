@@ -15,7 +15,7 @@ handlers=consoleHandler
 level=DEBUG
 handlers=consoleHandler
 qualname=distribute
-propagate=0
+propagate=1
 
 [handler_consoleHandler]
 class=handlers.RotatingFileHandler

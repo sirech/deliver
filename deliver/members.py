@@ -3,10 +3,7 @@ import random
 import codecs
 
 import logging
-import logging.config
-
-logging.config.fileConfig("logging.conf")
-logging.getLogger('distribute')
+logging.getLogger(__name__)
 
 class MemberMgr:
     '''
@@ -72,9 +69,9 @@ class MemberMgr:
             member = (m for m in self._members['members']
                       if m['email'].lower() in email).next()
         except StopIteration:
-            logging.error('find_member for %s had no results' % email)
+            logging.error('find_member for %s had no results', email)
             return None
-        logging.debug('find_member found %s' % member)
+        logging.debug('find_member found %s', member)
         return member
 
     def iswhitelisted(self, addr):
@@ -85,7 +82,7 @@ class MemberMgr:
     def isblacklisted(self, addr):
         '''Checks if the given email address appears in the
         blacklist.'''
-        return addr.lower() in self._members['blacklist']    
+        return addr.lower() in self._members['blacklist']
 
     def choose_name(self, member):
         '''Randomly chooses a name for the given member, between her

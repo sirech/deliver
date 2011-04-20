@@ -3,10 +3,7 @@ import smtplib
 from converter import UnicodeMessage
 
 import logging
-import logging.config
-
-logging.config.fileConfig("logging.conf")
-logging.getLogger('distribute')
+logging.getLogger(__name__)
 
 class Sender:
     '''
@@ -37,7 +34,7 @@ class Sender:
         msg.replace_header('From', self.get_address())
         msg.replace_header('Reply-To', self.get_address())
         for recipient in recipients:
-            logging.debug('Sending message to %s' % recipient)
+            logging.debug('Sending message to %s', recipient)
             s = smtplib.SMTP(self._cfg['smtp_server'])
             msg.replace_header('To', recipient)
             s.sendmail(self.get_address(), recipient, msg.as_string())
