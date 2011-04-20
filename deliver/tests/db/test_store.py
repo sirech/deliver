@@ -1,7 +1,7 @@
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError
 
-from deliver.tests.test_base import BaseTest, load_msg, get_msg, get_digests
+from deliver.tests.test_base import BaseTest, load_msg, get_msg, get_digests, archive_msg
 from deliver.db.store import Store
 
 class StoreTest(BaseTest):
@@ -14,9 +14,7 @@ class StoreTest(BaseTest):
         return get_msg(self.store, id)
 
     def _store_msg(self, fileName):
-        msg = load_msg(fileName)
-        self.store.archive(msg)
-        return (msg['Message-Id'], msg)
+        return archive_msg(self.store, fileName)
 
     def test_archive(self):
         msg = load_msg('sample')
@@ -58,9 +56,7 @@ class StoreTest(BaseTest):
     #     self.fail()
 
     def _digest_msg(self, fileName, *addresses):
-        id, msg = self._store_msg(fileName)
-        self.store.digest(id, *addresses)
-        return (id, msg)
+        return archive_msg(self.store, fileName, *addresses)
 
     def test_digest(self):
         id, msg = self._digest_msg('sample', u'test@mail.com')
@@ -71,6 +67,11 @@ class StoreTest(BaseTest):
         self.assertEqual(digest.msg_id, id)
         self.assertTrue(digest.sent_at is None)
         self.assertEqual(digest.msg.content, msg.as_string())
+
+    def test_digest_empty(self):
+        id, msg = self._digest_msg('sample')
+        parsed_msg = self._get_msg(id)
+        self.assertEqual(len(parsed_msg.digests), 0)
 
     def test_digest_multiple(self):
         addresses = [u'external@mail.com', u'test@mail.com']

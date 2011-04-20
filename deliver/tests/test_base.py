@@ -33,6 +33,25 @@ def get_msg(store, id):
     '''
     return store._db.session.query(message.Message).get(id)
 
+def archive_msg(store, fileName, *addresses):
+    '''
+    Archives the message contained in the given file.
+
+    store the store object to use to get a connection to the db
+
+    fileName the name of the file where the message to archive is
+    contained
+
+    *addresses the list of email addresses for which a digest should
+    be produced
+
+    Returns a tuple in the form (id, msg).
+    '''
+    msg = load_msg(fileName)
+    store.archive(msg)
+    store.digest(msg['Message-Id'], *addresses)
+    return (msg['Message-Id'], msg)
+
 def get_digests(store, address):
     '''
     Retrieve all the digests for the given address.

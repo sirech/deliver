@@ -30,4 +30,8 @@ class ConverterDigestTest(BaseTest):
 
     def test_build_mail(self):
         msg = DigestMessage(self._load_mails('sample', 'sample5', 'sample7'))
-        print msg
+        self.assertTrue('Digest for' in msg['Subject'])
+        self.assertFalse(msg['Message-Id'] is None)
+        self.assertTrue('text/plain' in msg['Content-Type'])
+        self.assertEqual(msg['Content-Transfer-Encoding'], 'quoted-printable')
+        self.assertFalse(msg['Date'] is None)
