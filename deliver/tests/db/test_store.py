@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from sqlalchemy.exc import IntegrityError
 
 from deliver.tests.test_base import BaseTest, load_msg, get_msg, get_digests, archive_msg
@@ -127,4 +127,28 @@ class StoreTest(BaseTest):
         self._date_is_today(*[d.sent_at for d in get_digests(self.store, addresses[0])])
         for digest in get_digests(self.store, addresses[1]):
             self.assertTrue(digest.sent_at is None)
+
+    def test_discard_old_digests_empty(self):
+        self.assertEqual(self.store.discard_old_digests(3), [])
+
+    def test_discard_old_digests(self):
+        '''
+        Scenario: we have digests that have been already sent, new
+        digests and old digests.
+
+        If the discard method is executed, it should only mark the old
+        digests. Afterwards, the new digests should still be found by
+        messages_for_user.
+        '''
+        addresses = [u'external@mail.com', u'test@mail.com']
+        msgs = self._digest_msgs(['sample', 'sample2'], *addresses)
+        self.store.mark_digest_as_sent(addresses[1])
+        get_digests(self.store, addresses[0])[0].scheduled_at = datetime.now() - timedelta(days=100)
+        self.store._db.session.flush()
+
+        self.assertEqual(self.store.discard_old_digests(3), [msgs[0][0]])
+        self.assertEqual(self.store.users_with_pending_digests(), set([addresses[0]]))
+        parsed_msgs = self.store.messages_for_user(addresses[0])
+        self.assertEqual(len(parsed_msgs), 1)
+        self.assertEquals(parsed_msgs[0].as_string(), msgs[1][1].as_string())
 

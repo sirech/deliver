@@ -10,6 +10,7 @@ py['introductions'] = [u'says', u'tells']
 py['quotes'] = [u'No quote', u'No quote 2']
 py['real_name'] = u'Test'
 py['members'] = 'members.json.example'
+py['digest_age_limit'] = 3
 py['db_type'] = 'sqlite'
 py['db_name'] = 'testdb'
 py['db_host'] = 'localhost'

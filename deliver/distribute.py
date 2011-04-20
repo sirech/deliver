@@ -186,6 +186,7 @@ class OfflineDistributor(Distributor):
         digests, a mail is built and sent to them.
         '''
         logging.debug('update is called')
+        self._store.discard_old_digests(self._cfg['digest_age_limit'])
         users = self._store.users_with_pending_digests()
         for user in users:
             messages = self._store.messages_for_user(user)

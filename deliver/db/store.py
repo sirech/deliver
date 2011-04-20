@@ -1,5 +1,5 @@
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 from sqlalchemy.sql.expression import and_
 
 from deliver.converter import UnicodeMessage
@@ -116,6 +116,16 @@ class Store:
             .filter(and_(digest.Digest.send_to==recipient, digest.Digest.sent_at==None)) \
             .all()
 
+    def users_with_pending_digests(self):
+        '''
+        Returns a set with email addresses that have pending digests.
+        '''
+        digests = self._db.session.query(digest.Digest) \
+            .filter(digest.Digest.sent_at==None) \
+            .order_by(digest.Digest.scheduled_at) \
+            .all()
+        return set(d.send_to for d in digests)
+
     def messages_for_user(self, recipient):
         '''
         Returns all the messages which have a pending digest for the
@@ -128,15 +138,18 @@ class Store:
         digests = self._pending_digests(recipient)
         return [d.msg.parsed_content for d in digests]
 
-    def users_with_pending_digests(self):
+    def _mark_as_sent(self, digests):
         '''
-        Returns a set with email addresses that have pending digests.
+        Mark the given digests as sent by setting the sent_at field
+        with the current time.
+
+        returns the list of ids of the messages that were set as sent
         '''
-        digests = self._db.session.query(digest.Digest) \
-            .filter(digest.Digest.sent_at==None) \
-            .order_by(digest.Digest.scheduled_at) \
-            .all()
-        return set(d.send_to for d in digests)
+        time = datetime.now()
+        for d in digests:
+            d.sent_at = time
+        self._db.session.flush()
+        return [d.msg_id for d in digests]
 
     def mark_digest_as_sent(self, recipient):
         '''
@@ -148,11 +161,22 @@ class Store:
         returns the list of ids of the messages that were set as sent
         '''
         digests = self._pending_digests(recipient)
-        time = datetime.now()
-        for d in digests:
-            d.sent_at = time
-        self._db.session.flush()
-        return [d.msg_id for d in digests]
+        return self._mark_as_sent(digests)
+
+    def discard_old_digests(self, days):
+        '''
+        Marks old digests as sent.
+
+        days the number of days for the cutoff. If it is for example
+        3, all digests older than three days will be discarded.
+
+        returns the list of ids of the messages that were set as sent
+        '''
+        cutoff = datetime.now() - timedelta(days=days)
+        digests = self._db.session.query(digest.Digest) \
+            .filter(and_(digest.Digest.sent_at==None, digest.Digest.scheduled_at < cutoff)) \
+            .all()
+        return self._mark_as_sent(digests)
 
     # DEBUG
 

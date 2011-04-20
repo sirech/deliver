@@ -52,6 +52,15 @@ py['members'] = 'members.json.example'
 
 
 ###############
+# DIGESTS
+###############
+
+# The number of days that a digest is stored before being marked as
+# sent.
+py['digest_age_limit'] = 3
+
+
+###############
 # DB
 ###############
 

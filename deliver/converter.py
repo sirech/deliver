@@ -177,7 +177,8 @@ class DigestMessage(UnicodeMessage):
         '''
         space = u'\n' * 2
         messages = [(msg['Subject'], self._find_text(msg)) for msg in msg_list]
-        messages = [u'====' + subject + u'====' + space + payload for subject, payload in messages]
+        messages = [u'==== ' + subject + u' ===='
+                    + space + payload for subject, payload in messages]
         return (space + (u'*' * 75) + space).join(messages)
 
     def _find_text(self, msg):
