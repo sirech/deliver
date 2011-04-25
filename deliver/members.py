@@ -16,11 +16,19 @@ class MemberMgr:
     def __init__(self, config):
         self._members = json.load(codecs.open(config['members'], 'r', 'utf-8'))
 
+    def _choose_email_address(self, member) :
+        '''
+        Chooses an email address from the mail hash for the given
+        member, by using the send_to key. If the key is not defined
+        for the member, default is used as the key.'''
+        send_to = member['send_to'] if member.has_key('send_to') else 'default'
+        return member['email'][send_to]
+
     def _member_query(self, exclude = u'', active=True, digest=False):
         '''
         Returns a generator will all the members that fulfill the given conditions.
 
-        optional exclude the address to exclude from the results
+        optional exclude the address that should not appear in the results
 
         optional active whether the user should be active or not
 
@@ -32,9 +40,9 @@ class MemberMgr:
         '''
         # Normalize
         exclude = exclude.lower()
-        return (member['email'] for member in self._members['members']
+        return (self._choose_email_address(member) for member in self._members['members']
                 if member.get('active', False) is active and member.get('digest', False) is digest
-                and member['email'].lower() != exclude)
+                and not self._is_email_for_member(member, exclude))
 
     def active_members(self, sender = u''):
         '''
@@ -58,6 +66,16 @@ class MemberMgr:
         '''
         return list(self._member_query(exclude=sender, digest=True))
 
+    def _is_email_for_member(self, member, email):
+        '''
+        Returns true if the given email is one of the defined mails
+        for the given member, and false otherwise.
+        '''
+        for m in member['email'].values():
+            if m.lower() in email:
+                return True
+        return False
+
     def find_member(self, email):
         '''
         Returns the member with the given email address, or None if
@@ -67,7 +85,7 @@ class MemberMgr:
         email = email.lower()
         try:
             member = (m for m in self._members['members']
-                      if m['email'].lower() in email).next()
+                      if self._is_email_for_member(m,email)).next()
         except StopIteration:
             logging.error('find_member for %s had no results', email)
             return None

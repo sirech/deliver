@@ -1,26 +1,28 @@
 {
     "members" : [
         {
-            "email" : "test@mail.com",
+            "email" : { "default" : "test@mail.com"},
             "name" : "Name",
             "aliases" : ["Alternative 1", "Alt 2"],
             "active" : true
         },
         {
-            "email" : "loser@mail.com",
+            "email" : { "default" : "loser@mail.com"},
             "name" : "Unknown",
             "aliases" : ["Doe 1", "Doe 2"],
             "active" : true
         },
         {
-            "email" : "Stranger@mail.com",
+            "email" : { "work" : "Stranger@mail.com",
+                        "home" : "AnotherStranger@mail.com"},
+            "send_to" : "work",
             "name" : "Niño Él",
             "aliases" : ["Sí", "Quizás"],
             "digest" : true,             
             "active" : true
         },
         {
-            "email" : "inactive@mail.com",
+            "email" : { "default" : "inactive@mail.com"},
             "name" : "MIA",
             "aliases" : [],
             "active" : false

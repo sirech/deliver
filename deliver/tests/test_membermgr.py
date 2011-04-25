@@ -9,6 +9,12 @@ class MemberMgrTest(BaseTest):
         super(MemberMgrTest,self).setUp()
         self.memberMgr = MemberMgr(self.config)
 
+    def test_choose_email_address(self):
+        member = self.memberMgr.find_member(u'stranger@mail.com')
+        self.assertEqual(self.memberMgr._choose_email_address(member), u'Stranger@mail.com')
+        member['send_to'] = 'home'
+        self.assertEqual(self.memberMgr._choose_email_address(member), u'AnotherStranger@mail.com')
+
     def test_active_members(self):
         self.assertEqual(self.memberMgr.active_members(sender = u'TEST@mail.com'),
                          [u'loser@mail.com'])
@@ -28,6 +34,10 @@ class MemberMgrTest(BaseTest):
         member = self.memberMgr.find_member(u'stranger@mail.com')
         self.assertEqual(member['name'], u'Niño Él')
         self.assertEqual(member['aliases'], [u'Sí', u'Quizás'])
+
+    def test_find_member_secondary_address(self):
+        member = self.memberMgr.find_member(u'anotherstranger@mail.com')
+        self.assertEqual(member['name'], u'Niño Él')
 
     def test_find_member_special_chars(self):
         member = self.memberMgr.find_member(u'test@mail.com')
