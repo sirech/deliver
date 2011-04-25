@@ -1,5 +1,6 @@
 import sqlalchemy
 from sqlalchemy.interfaces import PoolListener
+from sqlalchemy.pool import NullPool
 
 from base import BaseDBWrapper
 
@@ -11,6 +12,7 @@ class DBWrapper(BaseDBWrapper):
         super(DBWrapper,self).__init__()
         self.engine = sqlalchemy.create_engine('sqlite:///%s' % kws['name'],
                                                echo=False, encoding='utf-8',
+                                               poolclass=NullPool,
                                                listeners=[ForeignKeysListener()])
         self._create_tables()
 
