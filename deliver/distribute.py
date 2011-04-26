@@ -9,7 +9,7 @@ from converter import DigestMessage
 from db.store import Store
 
 import logging
-logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 BASIC_EMAIL = re.compile(r'<(.+@.+\..+)>')
 
@@ -57,10 +57,10 @@ class Distributor(object):
         for candidate in candidates:
             match = BASIC_EMAIL.search(candidate)
             if match and len(match.groups()) == 1:
-                logging.debug('_find_sender_email found %s', match.group(1))
+                logger.debug('_find_sender_email found %s', match.group(1))
                 # Normalize
                 return match.group(1).lower()
-        logging.debug('_find_sender_email did not find the email in %s', candidates)
+        logger.debug('_find_sender_email did not find the email in %s', candidates)
         return ''
 
     def _find_actual_text(self, msg):
@@ -77,7 +77,7 @@ class Distributor(object):
         member = self._mgr.find_member(self._find_sender_email(msg))
         if member is not None:
             header = self._mgr.choose_name(member) + ' ' + self._choose_intro() + ':'
-            logging.debug('_create_header produced: %s',  header)
+            logger.debug('_create_header produced: %s',  header)
             return [header]
         return ['']
 
@@ -99,7 +99,7 @@ class OnlineDistributor(Distributor):
         Update the distribution list. Every new message in the server is processed and resent to the
         members of the list. If the resend is successful the new messages are deleted.
         '''
-        logging.debug('update is called')
+        logger.debug('update is called')
         self._reader.connect()
         ids = self._reader.new_messages()
         for id in ids:
@@ -108,7 +108,7 @@ class OnlineDistributor(Distributor):
                 self._resend(msg)
                 self._reader.delete(id)
         self._reader.disconnect()
-        logging.debug('update is finished')
+        logger.debug('update is finished')
         return len(ids) != 0
 
     def _resend(self, msg):
@@ -183,7 +183,7 @@ class OfflineDistributor(Distributor):
         Update the pending digests. For each user with pending
         digests, a mail is built and sent to them.
         '''
-        logging.debug('update is called')
+        logger.debug('update is called')
         self._store.discard_old_digests(self._cfg['digest_age_limit'])
         users = self._store.users_with_pending_digests()
         for user in users:
@@ -191,7 +191,7 @@ class OfflineDistributor(Distributor):
             msg = DigestMessage(messages)
             self._sender.send(msg, user)
             self._store.mark_digest_as_sent(user)
-        logging.debug('update is finished')
+        logger.debug('update is finished')
         return len(users) != 0
 
 # Identify the host in an email
@@ -204,5 +204,5 @@ def anonymize_email(match):
     '''
     chars = 'abcdefghijklmnopqrstuvwxyz'
     replacement = ''.join(random.choice(chars) for i in range(len(match.group(1))))
-    logging.debug('replacing %s with %s' % (match.group(1), replacement))
+    logger.debug('replacing %s with %s' % (match.group(1), replacement))
     return u'@%s' % replacement

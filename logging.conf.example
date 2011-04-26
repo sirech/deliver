@@ -1,27 +1,33 @@
 [loggers]
-keys=root,distribute
+keys=root,db
 
 [handlers]
-keys=consoleHandler
+keys=mainFileHandler,dbFileHandler
 
 [formatters]
 keys=simpleFormatter
 
 [logger_root]
 level=DEBUG
-handlers=consoleHandler
+handlers=mainFileHandler
 
-[logger_distribute]
+[logger_db]
 level=DEBUG
-handlers=consoleHandler
-qualname=distribute
+handlers=dbFileHandler
+qualname=db
 propagate=1
 
-[handler_consoleHandler]
+[handler_mainFileHandler]
 class=handlers.RotatingFileHandler
 level=DEBUG
 formatter=simpleFormatter
 args=("ml.log", "a", 0, 10,)
+
+[handler_dbFileHandler]
+class=handlers.RotatingFileHandler
+level=DEBUG
+formatter=simpleFormatter
+args=("db.log", "a", 0, 10,)
 
 [formatter_simpleFormatter]
 format=%(asctime)s - %(name)s - %(levelname)s - %(message)s

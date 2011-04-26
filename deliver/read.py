@@ -4,7 +4,7 @@ import email
 from converter import UnicodeMessage
 
 import logging
-logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 class Reader:
     '''
@@ -37,7 +37,7 @@ class Reader:
         '''
         st, msg_list, _ = self._s.list()
         self._check(st)
-        logging.debug('new_messages: %s', msg_list)
+        logger.debug('new_messages: %s', msg_list)
         return sorted(int(msg.split(' ')[0]) for msg in msg_list)
 
     def get(self, id):
@@ -55,4 +55,4 @@ class Reader:
         Checks the given return code. If there is an error, it is logged.
         '''
         if not st.startswith('+OK'):
-            logging.error('failed operation: %s', st)
+            logger.error('failed operation: %s', st)

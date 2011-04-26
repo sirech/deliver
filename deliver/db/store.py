@@ -5,6 +5,9 @@ from sqlalchemy.sql.expression import and_
 from deliver.converter import UnicodeMessage
 from models import message, digest
 
+import logging
+logger = logging.getLogger('db')
+
 DB = {
     'sqlite' : 'sqlite'
     }
@@ -20,6 +23,7 @@ def choose_backend(backend_name):
     '''
     full_name = 'deliver.db.%s' % DB[backend_name]
     __import__(full_name)
+    logger.info('Using %s module for the database', full_name)
     return sys.modules[full_name]
 
 class Store:
@@ -44,6 +48,7 @@ class Store:
         self._cfg = {}
         for key in ['type', 'host', 'name', 'user', 'password']:
             self._cfg[key] = config['db_%s' % key]
+        logger.info('Connecting to %s:%s with user %s', self._cfg['name'], self._cfg['host'], self._cfg['user'])
         self._init_db()
 
     def _init_db(self):
@@ -69,6 +74,7 @@ class Store:
         '''
         assert isinstance(msg, UnicodeMessage)
         m = message.Message(msg['Message-Id'], msg, datetime.now())
+        logger.info('Archiving message %s', m)
         self._db.session.add(m)
         self._db.session.flush()
         return m.id
@@ -84,6 +90,7 @@ class Store:
         m = self._db.session.query(message.Message).get(msg_id)
         assert m.sent_at is None
         m.sent_at = datetime.now()
+        logger.info('Marking message as sent %s', m)
         self._db.session.flush()
 
     def digest(self, msg_id, *recipients):
@@ -103,6 +110,7 @@ class Store:
             assert isinstance(recipient, unicode)
         time = datetime.now()
         digests = [digest.Digest(msg_id, recipient, time) for recipient in recipients]
+        logger.info('Creating digests %s', digests)
         self._db.session.add_all(digests)
         self._db.session.flush()
 
@@ -124,7 +132,9 @@ class Store:
             .filter(digest.Digest.sent_at==None) \
             .order_by(digest.Digest.scheduled_at) \
             .all()
-        return set(d.send_to for d in digests)
+        addresses = set(d.send_to for d in digests)
+        logger.debug('users_with_pending_digests: %s', addresses)
+        return addresses
 
     def messages_for_user(self, recipient):
         '''
@@ -136,6 +146,7 @@ class Store:
         recipient the email address for the user
         '''
         digests = self._pending_digests(recipient)
+        logger.debug('messages_for_user found digests for %s: %s', recipient, digests)
         return [d.msg.parsed_content for d in digests]
 
     def _mark_as_sent(self, digests):
@@ -161,6 +172,7 @@ class Store:
         returns the list of ids of the messages that were set as sent
         '''
         digests = self._pending_digests(recipient)
+        logger.debug('mark_digest_as_sent has digests for %s: %s', recipient, digests)
         return self._mark_as_sent(digests)
 
     def discard_old_digests(self, days):
@@ -176,6 +188,7 @@ class Store:
         digests = self._db.session.query(digest.Digest) \
             .filter(and_(digest.Digest.sent_at==None, digest.Digest.scheduled_at < cutoff)) \
             .all()
+        logger.debug('discard_old_digests is discarding: %s', digests)
         return self._mark_as_sent(digests)
 
     # DEBUG

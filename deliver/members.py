@@ -3,7 +3,7 @@ import random
 import codecs
 
 import logging
-logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 class MemberMgr:
     '''
@@ -87,9 +87,9 @@ class MemberMgr:
             member = (m for m in self._members['members']
                       if self._is_email_for_member(m,email)).next()
         except StopIteration:
-            logging.error('find_member for %s had no results', email)
+            logger.error('find_member for %s had no results', email)
             return None
-        logging.debug('find_member found %s', member)
+        logger.debug('find_member found %s', member)
         return member
 
     def iswhitelisted(self, addr):
