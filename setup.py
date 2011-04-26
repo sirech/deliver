@@ -22,10 +22,7 @@ setup(
     url="https://github.com/sirech/deliver",
     download_url="https://github.com/sirech/deliver",
     packages=find_packages(exclude=[]),
-    # scripts=["bin/pyblosxom-cmd"],
-    # zip_safe=False,
     test_suite="deliver.tests.testrunner.test_suite",
-    # include_package_data=True,
     install_requires=[
         'Mock>=0.7.0',
         'sqlalchemy>=0.6.0'
