@@ -145,6 +145,11 @@ class UnicodeMessage(object):
         return getattr(self._msg, name)
 
 class DigestMessage(UnicodeMessage):
+    '''
+    This is a class used to build a digest from a list of emails. All
+    the emails are summarized in a single body of plain text. Any
+    other attachments or extra content is ignored.
+    '''
 
     def __init__(self, msg_list):
         '''

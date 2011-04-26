@@ -22,7 +22,9 @@ class MemberMgr:
         member, by using the send_to key. If the key is not defined
         for the member, default is used as the key.'''
         send_to = member['send_to'] if member.has_key('send_to') else 'default'
-        return member['email'][send_to]
+        email = member['email'][send_to]
+        logger.debug('_choose_email_address for %s took %s', member['name'], email)
+        return email
 
     def _member_query(self, exclude = u'', active=True, digest=False):
         '''
