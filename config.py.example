@@ -61,6 +61,26 @@ py['digest_age_limit'] = 3
 
 
 ###############
+# DAEMON
+###############
+
+# The amount of time in seconds that the updater script sleeps in between updates
+py['sleep_interval'] = 300
+
+# The amount of time in seconds that the updater script sleeps after a
+# message is received. This should be lower than 'sleep_interval', and
+# it is intended to decrease response time when multiple messages are
+# sent/answered in a short period of time
+py['sleep_after_message'] = 60
+
+# Right after 'sleep_after_message' is used, the amount of time to
+# sleep is increased until it reaches again the initial value
+# 'sleep_interval'. This variable controls how big that increment is
+# (in seconds)
+py['sleep_increment'] = 30
+
+
+###############
 # DB
 ###############
 

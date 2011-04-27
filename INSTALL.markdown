@@ -42,6 +42,7 @@ _config.py_. It needs the following edits:
  * __CREDENTIALS__: a valid mail server.
  * __MEMBERS__: the file with the members described above.
  * __DB__: The settings for the database connection.
+ * __DAEMON__: How often the daemon tries to get new updates.
 
  Other settings are optional, but also recommended.
 
@@ -49,12 +50,25 @@ _config.py_. It needs the following edits:
 _logging.conf.example_ file. Another link for the _manifest.json_ file
 is needed (should be removed in the future).
 
-5. Lastly, copy the files _updater.py_ and _digester.py_ to the
-folder. These are used to launch the processing. Symlinking them
-doesn't work, sadly.
+5. Lastly, copy the files _updater.py_, _deliverdaemon.py_ and
+_digester.py_ to the folder. These are used to launch the
+processing. Symlinking them doesn't work, sadly.
 
-### Scheduling updates
+### Starting deliver
 
-Right now, _deliver_ works only via cron jobs. _updater.py_ should be
-called as often as possible, as it is the one who delivers new
-messages. _digester.py_ can be called with less frequency.
+#### Updates
+
+The script _updater.py_ runs in an endless loop, updating the list
+according to the settings. This script can be called directly, but is
+better to use the daemon _deliverdaemon.py_. It can be simply started
+with a command like `python deliverdaemon.py --start` (or with the -h
+option for more info). This "daemonizes" the updater script.
+
+It is recommended to set up a cronjob to check if the process is still
+alive.
+
+#### Digests
+
+Digests are managed via _digester.py_, which should be called as a
+cronjob. The frequency depends on how many digests per day have to be
+generated.

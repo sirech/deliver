@@ -25,7 +25,8 @@ setup(
     test_suite="deliver.tests.testrunner.test_suite",
     install_requires=[
         'Mock>=0.7.0',
-        'sqlalchemy>=0.6.0'
+        'sqlalchemy>=0.6.0',
+        'supay>=0.0.7'
         ],
     classifiers=[
         "Development Status :: 3 - Alpha",
