@@ -12,7 +12,7 @@ def init_d():
 
 def run():
     daemon = init_d()
-    daemon.start(check_pid=True, verbose=True)
+    daemon.start(verbose=True)
     # Undo some of the changes done by start, otherwise it won't work
     os.chdir(curdir)
     prepare()

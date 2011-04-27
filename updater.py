@@ -35,7 +35,6 @@ def prepare(test_mode=False):
 
 def update():
     '''Updates the distributor.'''
-    print 'Calling update'
     return distributor.update()
 
 def sleeping_time(last_time, update_did_something):
@@ -57,11 +56,11 @@ def loop():
     Loops indefinitely, updating the distributor and then sleeping for
     a defined time.
     '''
+    print 'Starting...'
     sleep = py['sleep_interval']
     while run:
         success = update()
         sleep = sleeping_time(sleep, success)
-        print 'Sleeping %d' % sleep
         time.sleep(sleep)
 
 def terminate(signum, frame):
