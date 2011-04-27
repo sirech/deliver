@@ -6,7 +6,7 @@ from updater import prepare, loop
 
 def init_d():
     curdir = os.path.abspath(os.path.curdir)
-    return Daemon(name='deliver', catch_all_log=True, stdin=os.path.join(curdir, 'output.log'), pid_dir=curdir)
+    return Daemon(name='deliver', catch_all_log=curdir, pid_dir=curdir)
 
 def run():
     daemon = init_d()
