@@ -5,7 +5,8 @@ from supay import Daemon
 from updater import prepare, loop
 
 def init_d():
-    return Daemon(name='deliver', pid_dir=os.path.abspath(os.path.curdir))
+    curdir = os.path.abspath(os.path.curdir)
+    return Daemon(name='deliver', catch_all_log=True, stdin=os.path.join(curdir, 'output.log'), pid_dir=curdir)
 
 def run():
     daemon = init_d()
