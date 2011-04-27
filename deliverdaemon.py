@@ -1,10 +1,11 @@
 import argparse
+import os
 
 from supay import Daemon
 from updater import prepare, loop
 
 def init_d():
-    return Daemon(name='deliver', pid_dir='.')
+    return Daemon(name='deliver', pid_dir=os.path.abspath(os.path.curdir))
 
 def run():
     daemon = init_d()
