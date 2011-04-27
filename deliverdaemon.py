@@ -12,7 +12,7 @@ def init_d():
 
 def run():
     daemon = init_d()
-    daemon.start(verbose=True)
+    daemon.start()
     # Undo some of the changes done by start, otherwise it won't work
     os.chdir(curdir)
     prepare()
@@ -34,11 +34,13 @@ def restart():
         pid = pidfile.readline()
         os.kill(int(pid), 0)
     except OSError:
+        if os.path.isfile(daemon.pid):
+            os.remove(daemon.pid)
         run()
 
 def stop():
     daemon = init_d()
-    daemon.stop(verbose=True)
+    daemon.stop()
 
 def status():
     daemon = init_d()
