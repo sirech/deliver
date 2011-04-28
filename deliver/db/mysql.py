@@ -1,3 +1,5 @@
+import sqlalchemy
+
 from base import BaseDBWrapper
 
 class DBWrapper(BaseDBWrapper):
