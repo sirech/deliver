@@ -12,15 +12,15 @@ class BaseDBWrapper(object):
         metadata = MetaData()
         metadata.bind = self.engine
         self.messages = self._create_table('messages', metadata,
-                                           Column('id', String(256), primary_key=True),
+                                           Column('id', String(192), primary_key=True),
                                            Column('content', Text, nullable=False),
                                            Column('received_at', DateTime, nullable=False),
                                            Column('sent_at', DateTime))
 
         self.digests = self._create_table('digests', metadata,
-                                          Column('msg_id', String(256), ForeignKey('messages.id', ondelete='cascade'),
+                                          Column('msg_id', String(192), ForeignKey('messages.id', ondelete='cascade'),
                                                  primary_key=True),
-                                          Column('send_to', String(256), primary_key=True),
+                                          Column('send_to', String(192), primary_key=True),
                                           Column('scheduled_at', DateTime, nullable=False),
                                           Column('sent_at', DateTime))
 
