@@ -2,11 +2,8 @@
 
 - whitelist
  - hold message
- 
-- daemon
 
-- db
- - digest
+- real db
 
 - download links and attach them
 

@@ -11,18 +11,18 @@ class BaseDBWrapper(object):
 
         metadata = MetaData()
         metadata.bind = self.engine
-        self.messages = Table('messages', metadata,
-                              Column('id', String(256), primary_key=True),
-                              Column('content', Text, nullable=False),
-                              Column('received_at', DateTime, nullable=False),
-                              Column('sent_at', DateTime))
+        self.messages = self._create_table('messages', metadata,
+                                           Column('id', String(256), primary_key=True),
+                                           Column('content', Text, nullable=False),
+                                           Column('received_at', DateTime, nullable=False),
+                                           Column('sent_at', DateTime))
 
-        self.digests = Table('digests', metadata,
-                             Column('msg_id', String(256), ForeignKey('messages.id', ondelete='cascade'),
-                                    primary_key=True),
-                             Column('send_to', String(256), primary_key=True),
-                             Column('scheduled_at', DateTime, nullable=False),
-                             Column('sent_at', DateTime))
+        self.digests = self._create_table('digests', metadata,
+                                          Column('msg_id', String(256), ForeignKey('messages.id', ondelete='cascade'),
+                                                 primary_key=True),
+                                          Column('send_to', String(256), primary_key=True),
+                                          Column('scheduled_at', DateTime, nullable=False),
+                                          Column('sent_at', DateTime))
 
         metadata.bind = self.engine
         metadata.create_all(self.engine)
@@ -37,3 +37,6 @@ class BaseDBWrapper(object):
 
     def __del__(self):
         self.session.close()
+
+    def _create_table(self, name, metadata, *columns):
+        return Table(name, metadata, *columns, **self._table_options())

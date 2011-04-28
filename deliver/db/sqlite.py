@@ -16,6 +16,9 @@ class DBWrapper(BaseDBWrapper):
                                                listeners=[ForeignKeysListener()])
         self._create_tables()
 
+    def _table_options(self):
+        return {}
+
 class ForeignKeysListener(PoolListener):
     def connect(self, dbapi_con, con_record):
         db_cursor = dbapi_con.execute('pragma foreign_keys=ON')

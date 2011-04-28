@@ -16,7 +16,10 @@ A database is necessary for this software to work. Right now, the
 following databases are supported:
 
 1. _SQLite_: Should work out of the box. Foreign keys are properly
-checked starting from version 3.6.19
+checked starting from version 3.6.19.
+
+2. _MySQL_: An adapter needs to be installed, with something like
+`easy_install MySQL-python`. 
 
 ## Installation
 
