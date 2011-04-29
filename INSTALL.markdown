@@ -19,7 +19,9 @@ following databases are supported:
 checked starting from version 3.6.19.
 
 2. _MySQL_: An adapter needs to be installed, with something like
-`easy_install MySQL-python`. 
+`easy_install MySQL-python`. The instance of the database needs to be
+set up before using _deliver_. It is not necessary to create the
+tables, though.
 
 ## Installation
 

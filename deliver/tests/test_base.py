@@ -5,10 +5,17 @@ import email
 from deliver.converter import UnicodeMessage
 from deliver.db.models import message, digest
 
+def open_data(fileName):
+    '''
+    Opens the given file, which resides in the folder where all the
+    test data is.
+    '''
+    return open(os.path.join('test_data', fileName))
+
 def load_msg(fileName):
     '''Loads the message contained in the given file and returns it as
     an UnicodeMessage.'''
-    return UnicodeMessage(email.message_from_file(open('test_data/%s' % fileName)))
+    return UnicodeMessage(email.message_from_file(open_data(fileName)))
 
 def load_all_msg():
     '''Loads all the available sample messages and returns them as a list.'''

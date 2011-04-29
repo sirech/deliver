@@ -1,4 +1,6 @@
 import email
+import urllib2
+
 from datetime import datetime
 from cStringIO import StringIO
 
@@ -6,7 +8,10 @@ from email.charset import add_charset, Charset, QP
 from email.generator import Generator
 from email.header import decode_header, Header
 from email.mime.text import MIMEText
+from email.MIMEBase import MIMEBase
 from email.utils import make_msgid, formatdate
+
+__all__ = ['UnicodeMessage', 'DigestMessage', 'DownloadMessage']
 
 def to_unicode(s, encoding=None):
     '''
@@ -144,6 +149,23 @@ class UnicodeMessage(object):
     def __getattr__(self, name):
         return getattr(self._msg, name)
 
+def complete_headers(msg, subject, id):
+    '''
+    Complete the subject, message-id and date headers of a given mail.
+    '''
+    assert isinstance(msg, UnicodeMessage)
+    msg.replace_header('Subject', subject)
+    msg.replace_header('Message-Id', to_unicode(make_msgid(id)))
+    msg.replace_header('Date', to_unicode(formatdate(localtime=True, usegmt=True)))
+
+def build_text_mail(text):
+    '''
+    Builds an email that consists of the given text.
+    '''
+    assert isinstance(text, unicode)
+    msg = MIMEText(text.encode('utf-8'), 'plain', 'UTF-8')
+    return msg
+
 class DigestMessage(UnicodeMessage):
     '''
     This is a class used to build a digest from a list of emails. All
@@ -165,15 +187,11 @@ class DigestMessage(UnicodeMessage):
 
     def _complete_headers(self):
         '''Fill the headers of the mail'''
-        self.replace_header('Subject', u'Digest for %s' % datetime.now())
-        self.replace_header('Message-Id', to_unicode(make_msgid('digest')))
-        self.replace_header('Date', to_unicode(formatdate(localtime=True, usegmt=True)))
+        complete_headers(self, u'Digest for %s' % datetime.now(), 'digest')
 
     def _build_mail(self, msg_list):
         '''Returns a mail that contains all the given mails as a single text'''
-        merged = self._merge_mails(msg_list)
-        msg = MIMEText(merged.encode('utf-8'), 'plain', 'UTF-8')
-        return msg
+        return build_text_mail(self._merge_mails(msg_list))
 
     def _merge_mails(self, msg_list):
         '''
@@ -202,5 +220,60 @@ class DigestMessage(UnicodeMessage):
                 fallback = part.get_payload(decode=True)
         return fallback
 
+class DownloadMessage(UnicodeMessage):
+    '''
+    This class is used to build a mail that contains an attachment,
+    which is a website downloaded from the given url.
+    '''
 
+    def __init__(self, url):
+        '''
+        Builds a mail, downloading the given url in the process and
+        saving it as an attachment.
+        '''
+        self.url = self._sanitize(url)
+        super(DownloadMessage,self).__init__(self._build_mail())
+        self._complete_headers()
+        pass
 
+    def _sanitize(self, url):
+        '''
+        Returns the given url as something that can be used by
+        urlopen.
+        '''
+        if not url.startswith('http://'):
+            url = 'http://' + url
+        return url
+
+    def _complete_headers(self):
+        '''Fill the headers of the mail'''
+        complete_headers(self, u'Download of %s' % self.url, 'download')
+
+    def _build_mail(self):
+        '''
+        Download the given url and build an attachment with the
+        contents. In case that the download fails, a text mail with
+        the error is built instead.
+        '''
+        success, dl = self._download_url(self.url)
+        if not success:
+            return build_text_mail(dl)
+
+        part = MIMEBase('application', "octet-stream")
+        part.set_payload(dl)
+        email.Encoders.encode_base64(part)
+        part.add_header('Content-Disposition', 'attachment; filename="%s"' % self.url)
+        return part
+
+    def _download_url(self, url):
+        '''
+        Return a tuple (status, content), with content being the
+        content of the url as a string, and status a boolean marking
+        whether the download was succesful or not.'''
+        try:
+            web = urllib2.urlopen(url)
+        except Exception as e:
+            result = (False, to_unicode(str(e)))
+        else:
+            result = (True, web.read())
+        return result
