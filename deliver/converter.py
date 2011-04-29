@@ -9,6 +9,7 @@ from email.generator import Generator
 from email.header import decode_header, Header
 from email.mime.text import MIMEText
 from email.MIMEBase import MIMEBase
+from email.MIMEMultipart import MIMEMultipart
 from email.utils import make_msgid, formatdate
 
 __all__ = ['UnicodeMessage', 'DigestMessage', 'DownloadMessage']
@@ -259,11 +260,14 @@ class DownloadMessage(UnicodeMessage):
         if not success:
             return build_text_mail(dl)
 
+        msg = MIMEMultipart()
+        msg.attach(build_text_mail(u'Downloaded website included as an attachment'))
         part = MIMEBase('application', "octet-stream")
         part.set_payload(dl)
         email.Encoders.encode_base64(part)
         part.add_header('Content-Disposition', 'attachment; filename="%s"' % self.url)
-        return part
+        msg.attach(part)
+        return msg
 
     def _download_url(self, url):
         '''

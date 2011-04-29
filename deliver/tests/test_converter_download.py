@@ -36,12 +36,14 @@ class ConverterDownloadTest(BaseTest):
     def test_build_mail(self, urlopen):
         url = 'www.google.com'
         msg = self._msg(urlopen, url, open_data('google.html'))
-
         self.assertTrue('Download' in msg['Subject'])
         self.assertFalse(msg['Message-Id'] is None)
-        self.assertEqual(msg['Content-Transfer-Encoding'], 'base64')
         self.assertFalse(msg['Date'] is None)
-        self.assertTrue(msg.get_payload().startswith(
+        self.assertTrue(u'multipart/mixed' in msg['Content-Type'] )
+
+        attachment = msg.get_payload(i=1)
+        self.assertEqual(attachment['Content-Transfer-Encoding'], 'base64')
+        self.assertTrue(attachment.get_payload().startswith(
                 u'PCFkb2N0eXBlIGh0bWw+PGh0bWw+PGhlYWQ+PG1ldGEgaHR0cC1lcXVpdj0iY29udGVudC10eXBl'))
 
     @patch('urllib2.urlopen')
