@@ -33,6 +33,13 @@ A member can receive messages in digests. Every received message is
 archived. Then, at some point, a digest is generated for a user,
 containing all the messages pending for the user in text format.
 
+### Offline websites
+
+For those that can only use email, there is the possibility to request
+a webpage and get it as an email attachment. You only have to send an
+email to the list with a subject like `GET _url_`, and you'll get an
+email with the url downloaded as an attachment.
+
 ## Configuration
 
 Many options are configurable, via a _config.py_ file. An example file
