@@ -265,7 +265,7 @@ class DownloadMessage(UnicodeMessage):
         part = MIMEBase('application', "octet-stream")
         part.set_payload(dl)
         email.Encoders.encode_base64(part)
-        part.add_header('Content-Disposition', 'attachment; filename="%s"' % self.url)
+        part.add_header('Content-Disposition', 'attachment; filename="%s"' % 'website.html')
         msg.attach(part)
         return msg
 
