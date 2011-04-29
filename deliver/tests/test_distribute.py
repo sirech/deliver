@@ -6,6 +6,22 @@ from deliver.distribute import OnlineDistributor
 from deliver.read import Reader
 from deliver.send import Sender
 
+def check_start_stop(test):
+    test.reader.connect.assert_called_once_with()
+    test.reader.new_messages.assert_called_once_with()
+    test.reader.disconnect.assert_called_once_with()
+
+def check_interactions(test, *ids):
+    test.assertEqual(test.sender.send.call_count, len(ids))
+    test.assertEqual(test.reader.delete.call_count, len(ids))
+    test.assertEqual(tuple(id[0] for id, _ in test.reader.delete.call_args_list), ids)
+
+def check_archived(test, *msgs):
+    for msg in msgs:
+        parsed_msg = get_msg(test.distributor._store, msg['Message-Id'])
+        test.assertTrue(parsed_msg.received_at is not None)
+        test.assertTrue(parsed_msg.sent_at is not None)
+
 class OnlineDistributeTest(BaseTest):
 
     def setUp(self):
@@ -18,20 +34,13 @@ class OnlineDistributeTest(BaseTest):
         self.msg = load_msg('sample')
 
     def _check_start_stop(self):
-        self.reader.connect.assert_called_once_with()
-        self.reader.new_messages.assert_called_once_with()
-        self.reader.disconnect.assert_called_once_with()
+        check_start_stop(self)
 
     def _check_interactions(self, *ids):
-        self.assertEqual(self.sender.send.call_count, len(ids))
-        self.assertEqual(self.reader.delete.call_count, len(ids))
-        self.assertEqual(tuple(id[0] for id, _ in self.reader.delete.call_args_list), ids)
+        check_interactions(self, *ids)
 
     def _check_archived(self, *msgs):
-        for msg in msgs:
-            parsed_msg = get_msg(self.distributor._store, msg['Message-Id'])
-            self.assertTrue(parsed_msg.received_at is not None)
-            self.assertTrue(parsed_msg.sent_at is not None)
+        check_archived(self, *msgs)
 
     def test_update_nothing_new(self):
         self.reader.new_messages.return_value = []

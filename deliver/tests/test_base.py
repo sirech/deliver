@@ -26,7 +26,8 @@ def load_all_msg():
                                                 'sample6', # empty content
                                                 'sample7', # invalid sender
                                                 'sample8', # whitelisted sender
-                                                'sample9'  # blacklisted sender
+                                                'sample9',  # blacklisted sender
+                                                'sample10', # get www.google.com
                                                 ]]
 
 def get_msg(store, id):

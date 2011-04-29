@@ -1,0 +1,21 @@
+MIME-Version: 1.0
+Received: by 10.52.166.228 with HTTP; Mon, 18 Apr 2011 00:52:08 -0700 (PDT)
+Date: Mon, 18 Apr 2011 09:52:08 +0200
+Delivered-To: test@mail.com
+Message-ID: <BANLkTi=fPVg9WA=zcUA-LodtejE6nXreLQ10@mail.gmail.com>
+Subject: GET www.google.com
+From: =?ISO-8859-1?Q?Test?= <test@mail.com>
+To: sender@host.com
+Content-Type: multipart/alternative; boundary=20cf307f379223d6e104a12cab38
+
+--20cf307f379223d6e104a12cab38
+Content-Type: text/plain; charset=ISO-8859-1
+
+
+
+--20cf307f379223d6e104a12cab38
+Content-Type: text/html; charset=ISO-8859-1
+
+<br>
+
+--20cf307f379223d6e104a12cab38--

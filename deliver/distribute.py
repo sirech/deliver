@@ -5,7 +5,7 @@ import random
 from send import Sender
 from read import Reader
 from members import MemberMgr
-from converter import DigestMessage
+from converter import DigestMessage, DownloadMessage
 from db.store import Store
 
 import logging
@@ -88,6 +88,9 @@ class OnlineDistributor(Distributor):
     There is one public method, update. When it is called, the server is polled. If new mails have
     arrived, they are processed and resent to the members of the list. Afterward, the mails
     are deleted, but only if the resend process finished successfully.
+
+    If the subject is in a special format, instead of resending the
+    mail, a DownloadMessage is generated and sent back.
     '''
 
     def __init__(self, config):
@@ -105,11 +108,53 @@ class OnlineDistributor(Distributor):
         for id in ids:
             msg = self._reader.get(id)
             if self._isvalid(msg):
-                self._resend(msg)
+                self._process(msg)
                 self._reader.delete(id)
         self._reader.disconnect()
         logger.debug('update is finished')
         return len(ids) != 0
+
+    def _process(self, msg):
+        '''
+        Redirects to the correct action based on the subject of the
+        message.
+        '''
+        subject = msg['Subject']
+
+        if subject.lower().startswith('get'):
+            logger.debug('calling _download_and_send')
+            self._download_and_send(subject, msg)
+        else:
+            logger.debug('calling _resend')
+            self._resend(msg)
+
+    def _download_and_send(self, subject, msg):
+        '''
+        Creates a new DownloadMessage based on the subject and sends
+        it back to the sender.
+
+        The format of the subject must be: GET 'url'.
+        '''
+        id = self._store.archive(msg)
+        sender = self._find_sender_email(msg)
+        url = self._get_download_url(subject)
+
+        if url is not None:
+            logger.info('Downloading message for %s with url %s', sender, url)
+            self._sender.send(DownloadMessage(url), sender)
+            self._store.mark_as_sent(id)
+
+    def _get_download_url(self, subject):
+        '''
+        Returns the url to download from the subject of the message,
+        or None if no url could be found.
+        '''
+        subject = subject.lower().strip(' ')
+        parts = re.split(r'\s+', subject)
+        if len(parts) != 2:
+            logger.error('_get_download_url, %s has no valid url', subject)
+            return None
+        return parts[1]
 
     def _resend(self, msg):
         '''
