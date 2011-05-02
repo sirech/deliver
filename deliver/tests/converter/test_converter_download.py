@@ -37,7 +37,7 @@ class ConverterDownloadTest(BaseTest):
         url = 'www.google.com'
         msg = self._msg(urlopen, url, open_data('google.html'))
         self.assertTrue('Download' in msg['Subject'])
-        self.assertFalse(msg['Message-Id'] is None)
+        self.assertFalse(msg.id is None)
         self.assertFalse(msg['Date'] is None)
         self.assertTrue(u'multipart/mixed' in msg['Content-Type'] )
 
@@ -52,7 +52,7 @@ class ConverterDownloadTest(BaseTest):
         msg = DownloadMessage('')
 
         self.assertTrue('Download' in msg['Subject'])
-        self.assertFalse(msg['Message-Id'] is None)
+        self.assertFalse(msg.id is None)
         self.assertEqual(msg['Content-Transfer-Encoding'], 'quoted-printable')
         self.assertFalse(msg['Date'] is None)
         self.assertEqual(msg.get_payload(), u'HTTP Error 404: Not Found')

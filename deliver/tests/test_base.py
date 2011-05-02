@@ -57,8 +57,8 @@ def archive_msg(store, fileName, *addresses):
     '''
     msg = load_msg(fileName)
     store.archive(msg)
-    store.digest(msg['Message-Id'], *addresses)
-    return (msg['Message-Id'], msg)
+    store.digest(msg.id, *addresses)
+    return (msg.id, msg)
 
 def get_digests(store, address):
     '''

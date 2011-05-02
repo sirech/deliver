@@ -30,7 +30,7 @@ class SQLiteTest(BaseTest):
         mails = load_all_msg()
         for mail in mails:
             self.db.messages.insert().values(
-                id=mail['Message-Id'],
+                id=mail.id,
                 content=mail.as_string(),
                 received_at=datetime.now()).execute()
 

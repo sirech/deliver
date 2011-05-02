@@ -18,7 +18,7 @@ def check_interactions(test, *ids):
 
 def check_archived(test, *msgs):
     for msg in msgs:
-        parsed_msg = get_msg(test.distributor._store, msg['Message-Id'])
+        parsed_msg = get_msg(test.distributor._store, msg.id)
         test.assertTrue(parsed_msg.received_at is not None)
         test.assertTrue(parsed_msg.sent_at is not None)
 

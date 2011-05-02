@@ -18,8 +18,8 @@ class StoreTest(BaseTest):
 
     def test_archive(self):
         msg = load_msg('sample')
-        self.assertEqual(self.store.archive(msg), msg['Message-Id'])
-        self.assertEqual(self._get_msg(msg['Message-Id']).content, msg.as_string())
+        self.assertEqual(self.store.archive(msg), msg.id)
+        self.assertEqual(self._get_msg(msg.id).content, msg.as_string())
 
     def test_archive_msg(self):
         id, msg = self._store_msg('sample')
@@ -50,7 +50,7 @@ class StoreTest(BaseTest):
     #     # for some reason the assert is not working
     #     try:
     #         self.assertRaises(IntegrityError,
-    #                           self.store.digest(msg['Message-Id'], u'test@mail.com'))
+    #                           self.store.digest(msg.id, u'test@mail.com'))
     #     except IntegrityError:
     #         return
     #     self.fail()
@@ -97,7 +97,7 @@ class StoreTest(BaseTest):
         self.store.mark_digest_as_sent(addresses[0])
         msgs = self._digest_msgs(['sample3', 'sample4'], *addresses)
         parsed_msgs = self.store.messages_for_user(addresses[0])
-        self.assertEqual([m['Message-Id'] for m in parsed_msgs], [id for id, _ in msgs])
+        self.assertEqual([m.id for m in parsed_msgs], [id for id, _ in msgs])
         self.assertEqual(parsed_msgs[1].as_string(), msgs[1][1].as_string())
 
     def test_users_with_pending_digests_empty(self):

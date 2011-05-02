@@ -41,6 +41,10 @@ class UnicodeMessage(object):
     def __str__(self):
         return self.as_string()
 
+    @property
+    def id(self):
+        return self['Message-Id']
+    
     def as_string(self):
         """
         Returns the message as a string encoded with utf-8, avoiding the escaping

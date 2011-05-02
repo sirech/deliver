@@ -69,12 +69,12 @@ class Store:
         current time.
 
         msg the message to store. It is stored as a string, using the
-        Message-Id header as the key.
+        id of the message as the key.
 
         Returns the id used for the entry.
         '''
         assert isinstance(msg, UnicodeMessage)
-        m = message.Message(msg['Message-Id'], msg, datetime.now())
+        m = message.Message(msg.id, msg, datetime.now())
         logger.info('Archiving message %s', m)
         self._db.session.add(m)
         self._db.session.flush()
