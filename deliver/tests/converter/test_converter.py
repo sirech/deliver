@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from test_base import BaseTest, load_msg
+from deliver.tests.test_base import BaseTest, load_msg
 
 class ConverterTest(BaseTest):
     '''Tests for the UnicodeMessage class'''

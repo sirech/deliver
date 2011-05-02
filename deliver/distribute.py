@@ -5,7 +5,8 @@ import random
 from send import Sender
 from read import Reader
 from members import MemberMgr
-from converter import DigestMessage, DownloadMessage
+from converter.digest import DigestMessage
+from converter.download import DownloadMessage
 from db.store import Store
 
 import logging

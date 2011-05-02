@@ -1,7 +1,7 @@
 import poplib
 import email
 
-from converter import UnicodeMessage
+from converter.simple import UnicodeMessage
 
 import logging
 logger = logging.getLogger(__name__)

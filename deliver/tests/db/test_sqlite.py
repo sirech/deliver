@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 
 from deliver.tests.test_base import BaseTest, load_all_msg
 
-from deliver.converter import UnicodeMessage
+from deliver.converter.simple import UnicodeMessage
 from deliver.db.sqlite import DBWrapper
 
 class SQLiteTest(BaseTest):

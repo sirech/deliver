@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from test_base import BaseTest, load_msg
+from deliver.tests.test_base import BaseTest, load_msg
 
-from deliver.converter import DigestMessage
+from deliver.converter.digest import DigestMessage
 
 class ConverterDigestTest(BaseTest):
     '''Tests for the DigestMessage class'''

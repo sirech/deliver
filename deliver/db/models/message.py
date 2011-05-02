@@ -1,5 +1,5 @@
 import email
-from deliver.converter import UnicodeMessage
+from deliver.converter.simple import UnicodeMessage
 
 class Message(object):
 

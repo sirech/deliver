@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import urllib2
 
-from test_base import BaseTest, open_data
+from deliver.tests.test_base import BaseTest, open_data
 from mock import patch, Mock
 
-from deliver.converter import DownloadMessage
+from deliver.converter.download import DownloadMessage
 
 class ConverterDownloadTest(BaseTest):
     '''Tests for the DownloadMessage class'''

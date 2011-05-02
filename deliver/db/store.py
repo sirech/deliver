@@ -2,7 +2,7 @@ import sys
 from datetime import datetime, timedelta
 from sqlalchemy.sql.expression import and_
 
-from deliver.converter import UnicodeMessage
+from deliver.converter.simple import UnicodeMessage
 from models import message, digest
 
 import logging

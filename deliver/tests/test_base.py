@@ -2,7 +2,7 @@ import os
 import unittest
 import email
 
-from deliver.converter import UnicodeMessage
+from deliver.converter.simple import UnicodeMessage
 from deliver.db.models import message, digest
 
 def open_data(fileName):
