@@ -12,6 +12,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 BASIC_EMAIL = re.compile(r'<(.+@.+\..+)>')
+FOOTER_DIVIDER = u'_' * 60
 
 class Distributor(object):
     '''
@@ -196,7 +197,7 @@ class OnlineDistributor(Distributor):
         Creates a footer for the message, returned as a list of strings. The footer contains the
         name of the list, a randomly chosen quote and the program id.
         '''
-        return [u'_' * 60,
+        return [FOOTER_DIVIDER,
                 self._cfg['real_name'],
                 random.choice(self._cfg['quotes']),
                 self._powered_by()]
