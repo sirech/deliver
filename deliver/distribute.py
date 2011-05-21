@@ -186,7 +186,7 @@ class OnlineDistributor(Distributor):
             nl = u'\n' if editable.get_content_subtype() == 'plain' else u'<br>'
             editable.set_payload((nl * 2).join([
                         nl.join(header),
-                        EMAIL.sub(anonymize_email, editable.get_payload(decode=True)),
+                        EMAIL.sub(anonymize_email, editable.get_clean_payload(self._cfg['forbidden_words'])),
                         nl.join(footer)]))
 
     def _choose_intro(self):
@@ -249,7 +249,13 @@ def anonymize_email(match):
     Replaces the host of an email identified by the EMAIL regexp. The replacement is of the same
     length, and consists of random letters.
     '''
-    chars = 'abcdefghijklmnopqrstuvwxyz'
-    replacement = ''.join(random.choice(chars) for i in range(len(match.group(1))))
+    replacement = anonymize_word(match.group(1))
     logger.debug('replacing %s with %s' % (match.group(1), replacement))
     return u'@%s' % replacement
+
+def anonymize_word(word):
+    '''
+    Returns a word composed of random letters with the same length as the given word.
+    '''
+    chars = 'abcdefghijklmnopqrstuvwxyz'
+    return ''.join(random.choice(chars) for i in range(len(word)))

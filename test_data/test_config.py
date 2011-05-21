@@ -8,6 +8,7 @@ py['password'] = 'abcdef'
 py['subject_prefix'] = u'[Test]'
 py['introductions'] = [u'says', u'tells']
 py['quotes'] = [u'No quote', u'No quote 2']
+py['forbidden_words'] = {u'tasche' : u'cartera', u'industrie' : 'industria' }
 py['real_name'] = u'Test'
 py['members'] = 'members.json.example'
 py['digest_age_limit'] = 3

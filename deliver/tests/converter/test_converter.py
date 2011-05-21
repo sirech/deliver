@@ -11,6 +11,9 @@ class ConverterTest(BaseTest):
     def get_text(self, decode=False):
         return self.msg.get_payload(0).get_payload(decode=decode)
 
+    def get_clean_text(self, forbidden_words):
+        return self.msg.get_payload(0).get_clean_payload(forbidden_words)
+
     def set_text(self, payload):
         self.msg.get_payload(0).set_payload(payload)
 
@@ -100,3 +103,26 @@ class ConverterTest(BaseTest):
     def test_get_payload_empty(self):
         self.msg = load_msg('sample6')
         self._test_get(u'\n', u'\n')
+
+    def test_clean_word_no_replace(self):
+        self.assertEqual(self.msg._clean_word(u'panic', {}), u'panic')
+
+    def test_clean_word_replace(self):
+        self.assertEqual(self.msg._clean_word(u'panic', {u'panic' : u'don\'t'}), u'don\'t')
+
+    def test_clean_word_replace_case(self):
+        self.assertEqual(self.msg._clean_word(u'Panic', {u'panic' : u'don\'t'}), u'don\'t')
+
+    def test_clean_word_replace_special_chars(self):
+        self.assertEqual(self.msg._clean_word(u'Pánico', {u'pánico' : u'don\'t'}), u'don\'t')
+
+    def test_clean_word_surrounded(self):
+        self.assertEqual(self.msg._clean_word(u'*Pánico*?', {u'pánico' : u'don\'t'}), u'*don\'t*?')
+
+    def test_get_clean_payload(self):
+        words = self.config['forbidden_words']
+        payload = self.get_clean_text(words)
+        for word in words.keys():
+            self.assertFalse(word in payload)
+        for replacement in words.values():
+            self.assertTrue(replacement in payload)

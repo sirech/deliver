@@ -1,4 +1,5 @@
 import email
+import re
 
 from cStringIO import StringIO
 
@@ -44,7 +45,7 @@ class UnicodeMessage(object):
     @property
     def id(self):
         return self['Message-Id']
-    
+
     def as_string(self):
         """
         Returns the message as a string encoded with utf-8, avoiding the escaping
@@ -103,6 +104,34 @@ class UnicodeMessage(object):
         elif isinstance(payload, str):
             return to_unicode(payload, self._msg.get_content_charset())
         return payload
+
+    def get_clean_payload(self, forbidden_words):
+        '''
+        Gets a text payload, with the given forbidden words replaced.
+
+        forbidden_words a dictionary containing pairs of
+        (word_to_replace, replacement).
+        '''
+        assert isinstance(forbidden_words, dict)
+        payload = self.get_payload(decode=True)
+        assert isinstance(payload, unicode)
+        payload = payload.split(' ')
+        return ' '.join(self._clean_word(word, forbidden_words) for word in payload)
+
+    def _clean_word(self, word, forbidden_words):
+        '''
+        Returns a replacement if the given word is in the forbidden
+        words dictionary. Otherwise, the word is returned unchanged.
+
+        The word is striped of punctuation (i.e. period, asterisks)
+        and converted to lower for the comparison.
+        '''
+        punctuation = '.!?*()\'"[]-_+=:;<>,/'
+        match = word.lower().strip(punctuation)
+        if match in forbidden_words:
+            replacement = forbidden_words[match]
+            word = re.sub(match, replacement, word, flags=re.IGNORECASE)
+        return word
 
     def set_payload(self, payload):
         '''

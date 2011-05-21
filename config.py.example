@@ -41,6 +41,11 @@ py['quotes'] = [u'Chuck Norris can divide by 0']
 # The real name of the list, appended at the end of a mail.
 py['real_name'] = u'My mailing list'
 
+# Words that should not appear in the body of a message. They are
+# stored as a dictionary of (word, substitution) pairs. Words should
+# be stored in lowercase.
+py['forbidden_words'] = {u'shit' : u's***', u'fuck' : u'f*ck' }
+
 
 ###############
 # MEMBERS
