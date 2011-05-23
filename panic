@@ -1,0 +1,22 @@
+# -*- mode: Shell-script-*-
+#!/usr/bin/bash
+
+# panic
+# Author: Mario Fernandez
+#
+# Sends a mail to the specified recipient if Deliver has a deliver.pid
+# file, but it is not running.
+#
+# This script can be set up as a cronjob to check whether an
+# unexpected crash happened.
+
+TO=example@mail.com
+SUBJECT='DeliverPanic!'
+BODY="Time: `date`"
+
+if [ -f "deliver.pid" ]; then
+    ps aux | awk '{ print $2 }' | grep -qw $(cat deliver.pid)
+    if [ $? -eq 1 ]; then
+        echo $BODY | mail -s $SUBJECT $TO
+    fi
+fi
