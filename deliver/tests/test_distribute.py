@@ -49,10 +49,14 @@ class OnlineDistributeTest(BaseTest):
         self._check_start_stop()
         self._check_interactions()
 
-    def test_update_one_message(self):
+    def _update_with(self, msg):
         self.reader.new_messages.return_value = [1237]
-        self.reader.get.return_value = self.msg
+        self.reader.get.return_value = msg
         self.assertTrue(self.distributor.update())
+        return msg
+
+    def test_update_one_message(self):
+        self._update_with(self.msg)
 
         self._check_start_stop()
         self._check_interactions(1237)
@@ -73,27 +77,20 @@ class OnlineDistributeTest(BaseTest):
         self._check_archived(*messages.values())
 
     def test_update_invalid_message(self):
-        self.reader.new_messages.return_value = [1237]
-        self.reader.get.return_value = load_msg('sample7')
-        self.assertTrue(self.distributor.update())
+        self._update_with(load_msg('sample7'))
 
         self._check_start_stop()
         self._check_interactions()
 
     def test_update_whitelisted_message(self):
-        self.reader.new_messages.return_value = [1237]
-        msg = load_msg('sample8')
-        self.reader.get.return_value = msg
-        self.assertTrue(self.distributor.update())
+        msg = self._update_with(load_msg('sample8'))
 
         self._check_start_stop()
         self._check_interactions(1237)
         self._check_archived(msg)
 
     def test_update_blacklisted_message(self):
-        self.reader.new_messages.return_value = [1237]
-        self.reader.get.return_value = load_msg('sample9')
-        self.assertTrue(self.distributor.update())
+        self._update_with(load_msg('sample9'))
 
         self._check_start_stop()
         self._check_interactions()
