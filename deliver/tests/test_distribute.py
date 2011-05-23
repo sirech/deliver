@@ -98,6 +98,19 @@ class OnlineDistributeTest(BaseTest):
         self._check_start_stop()
         self._check_interactions()
 
+    def test_update_repeated_message(self):
+        messages = {
+            1237 : self.msg,
+            1238 : self.msg
+            }
+        self.reader.new_messages.return_value = messages.keys()
+        self.reader.get.side_effect = lambda id : messages[id]
+        self.assertTrue(self.distributor.update())
+
+        self._check_start_stop()
+        self._check_interactions(1237)
+        self._check_archived(self.msg)
+
     # Check internal methods to make sure things are working
     # smoothly
 

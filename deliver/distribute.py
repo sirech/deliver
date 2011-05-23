@@ -38,14 +38,19 @@ class Distributor(object):
 
         The rules for delivering a message are:
         - Valid if:
-        - comes from a member of the list
-        - comes from a whitelisted address
+         - comes from a member of the list
+         - comes from a whitelisted address
         - Invalid if:
-        - comes from a blacklisted address
-        - comes from any other address
+         - comes from a blacklisted address
+         - comes from any other address
+         - a message with the same id is already present in the database
         '''
         email = self._find_sender_email(msg)
         if self._mgr.isblacklisted(email):
+            logger.info('Message received from blacklisted email %s', email)
+            return False
+        if self._store.message_exists(msg.id):
+            logger.error('Message with id %s already exists in the database', msg.id)
             return False
         return self._mgr.find_member(email) is not None or self._mgr.iswhitelisted(email)
 

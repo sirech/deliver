@@ -16,6 +16,15 @@ class StoreTest(BaseTest):
     def _store_msg(self, fileName):
         return archive_msg(self.store, fileName)
 
+    def test_message_exists_false(self):
+        msg = load_msg('sample')
+        self.assertFalse(self.store.message_exists(msg.id))
+
+    def test_message_exists_true(self):
+        msg = load_msg('sample')
+        self.store.archive(msg)
+        self.assertTrue(self.store.message_exists(msg.id))
+
     def test_archive(self):
         msg = load_msg('sample')
         self.assertEqual(self.store.archive(msg), msg.id)

@@ -63,6 +63,19 @@ class Store:
         module = choose_backend(self._cfg['type'])
         self._db = module.DBWrapper(**self._cfg)
 
+    def _get_msg(self, msg_id):
+        '''
+        Gets the message with the given id from the database.
+        '''
+        return self._db.session.query(message.Message).get(msg_id)
+
+    def message_exists(self, msg_id):
+        '''
+        Returns True if a message with the given id exists in the
+        database.
+        '''
+        return self._get_msg(msg_id) is not None
+
     def archive(self, msg):
         '''
         Stores a message in the db. It sets the received time with the
@@ -88,7 +101,7 @@ class Store:
         msg_id the id of the message to modify.
         '''
         assert isinstance(msg_id, unicode)
-        m = self._db.session.query(message.Message).get(msg_id)
+        m = self._get_msg(msg_id)
         assert m.sent_at is None
         m.sent_at = datetime.now()
         logger.info('Marking message as sent %s', m)
