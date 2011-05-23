@@ -59,6 +59,9 @@ is needed (should be removed in the future).
 _digester.py_ to the folder. These are used to launch the
 processing. Symlinking them doesn't work, sadly.
 
+6. For extra notifications, the script _panic_ can also be copied to
+the folder.
+
 ### Starting deliver
 
 #### Updates
