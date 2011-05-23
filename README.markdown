@@ -40,6 +40,14 @@ a webpage and get it as an email attachment. You only have to send an
 email to the list with a subject like `GET _url_`, and you'll get an
 email with the url downloaded as an attachment.
 
+### Forbidden words
+
+A list of words can be defined that should not appear in the body of a
+message. If they do, they are replaced with the given replacement. The
+process is case insensitive, and punctuation surrounding the word is
+ignored. However, subwords are not replaced (for example, if _place_
+is in the list, _replace_ won't be substituted).
+
 ## Configuration
 
 Many options are configurable, via a _config.py_ file. An example file

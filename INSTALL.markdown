@@ -77,3 +77,20 @@ alive.
 Digests are managed via _digester.py_, which should be called as a
 cronjob. The frequency depends on how many digests per day have to be
 generated.
+
+#### Auto Restart Daemon
+
+The daemon might die for unexpected reasons. To avoid did, you can set
+up a cronjob that automatically restarts the daemon, with a command
+like `python deliverdaemon.py --restart`. If the daemon is already
+running, no action is performed. The script checks not only the
+existence of a _deliver.pid_, but also if the daemon is actually
+running.
+
+#### Get notified in case of problems
+
+Even with autorestart, it might happen that the program keeps
+crashing, not serving any emails. To be notified in this case, there
+is a shell script called _panic_. It can also be set up as a cronjob,
+and it checks if the daemon is running. If it is not, an email is sent
+to a specified direction to give a warning.
