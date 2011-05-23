@@ -10,7 +10,7 @@
 # This script can be set up as a cronjob to check whether an
 # unexpected crash happened.
 
-TO=example@mail.com
+TO=$1
 SUBJECT='DeliverPanic!'
 BODY="Time: `date`"
 
