@@ -36,8 +36,8 @@ class UnicodeMessage(object):
         self._msg = msg
         charset = msg.get_content_charset() or 'utf-8'
         self._body_charset = Charset(input_charset=charset)
-        assert self._body_charset.header_encoding == QP
-        assert self._body_charset.body_encoding == QP
+        assert self._body_charset.header_encoding in [None, QP]
+        assert self._body_charset.body_encoding in [None, QP]
 
     def __str__(self):
         return self.as_string()

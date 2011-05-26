@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from deliver.tests.test_base import BaseTest, load_msg
+from deliver.tests.test_base import BaseTest, load_msg, load_all_msg
 
 class ConverterTest(BaseTest):
     '''Tests for the UnicodeMessage class'''
@@ -126,3 +126,7 @@ class ConverterTest(BaseTest):
             self.assertFalse(word in payload)
         for replacement in words.values():
             self.assertTrue(replacement in payload)
+
+    def test_walk(self):
+        for mail in load_all_msg():
+            list(mail.walk())
