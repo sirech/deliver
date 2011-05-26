@@ -122,10 +122,11 @@ class ConverterTest(BaseTest):
     def test_get_clean_payload(self):
         words = self.config['forbidden_words']
         payload = self.get_clean_text(words)
+
         for word in words.keys():
-            self.assertFalse(word in payload)
+            self.assertFalse(word in payload, 'word %s was not removed' % word)
         for replacement in words.values():
-            self.assertTrue(replacement in payload)
+            self.assertTrue(replacement in payload, 'word %s was not inserted' % word)
 
     def test_walk(self):
         for mail in load_all_msg():

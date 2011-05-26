@@ -115,8 +115,11 @@ class UnicodeMessage(object):
         assert isinstance(forbidden_words, dict)
         payload = self.get_payload(decode=True)
         assert isinstance(payload, unicode)
-        payload = payload.split(' ')
-        return ' '.join(self._clean_word(word, forbidden_words) for word in payload)
+
+        payload = payload.split('\n')
+        return '\n'.join(
+            ' '.join(self._clean_word(word, forbidden_words) for word in line.split(' '))
+            for line in payload)
 
     def _clean_word(self, word, forbidden_words):
         '''
