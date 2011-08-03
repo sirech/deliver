@@ -9,6 +9,9 @@ import signal
 from config import py
 from deliver.distribute import OnlineDistributor
 
+import logging
+logger = logging.getLogger(__name__)
+
 distributor = None
 run = True
 
@@ -58,10 +61,14 @@ def loop():
     '''
     print 'Starting...'
     sleep = py['sleep_interval']
-    while run:
-        success = update()
+
+    try:
+        while run:
+            success = update()
         sleep = sleeping_time(sleep, success)
         time.sleep(sleep)
+    except Exception:
+        logging.exception('Oh noes! Exception')
 
 def terminate(signum, frame):
     '''
