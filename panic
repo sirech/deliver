@@ -17,6 +17,11 @@ BODY="Time: `date`"
 if [ -f "deliver.pid" ]; then
     ps aux | awk '{ print $2 }' | grep -qw $(cat deliver.pid)
     if [ $? -eq 1 ]; then
-        echo $BODY | mail -s $SUBJECT $TO
+        echo -e "$BODY\nProcess not running" | mail -s $SUBJECT $TO
     fi
+fi
+
+grep -qw "$(date +%Y-%m-%d).*ERROR" ml.log
+if [ $? -eq 1]; then
+    echo -e "$BODY\nERROR in log" | mail -s $SUBJECT $TO
 fi
