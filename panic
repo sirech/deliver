@@ -22,7 +22,7 @@ if [ -f "deliver.pid" ]; then
 fi
 
 # Looks scary, but means an ERROR in the same day and in the hour before
-grep -qw "$(date +%Y-%m-%d) $(( $(date +%H) - 1 )).*ERROR" ml.log
+grep -qw "$(date +%Y-%m-%d) $(( $(date +%k) - 1 )).*ERROR" ml.log
 if [ $? -eq 0 ]; then
     echo -e "$BODY\nERROR in log" | mail -s $SUBJECT $TO
 fi
