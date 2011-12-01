@@ -96,7 +96,7 @@ py['db_type'] = 'sqlite'
 py['db_host'] = 'db.host.com'
 
 # The name of the DB.
-py['db_name'] = 'db'
+py['db_name'] = 'deliver-db'
 
 # The user to access the DB.
 py['db_user'] = 'dbuser'
