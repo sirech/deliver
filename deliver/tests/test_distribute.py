@@ -49,6 +49,13 @@ class OnlineDistributeTest(BaseTest):
         self._check_start_stop()
         self._check_interactions()
 
+    def test_update_connect_throws_exception(self):
+        self.reader.connect.side_effect = Exception('message')
+
+        self.assertFalse(self.distributor.update())
+        self.reader.connect.assert_called_once_with()
+        self.assertEqual(self.reader.disconnect.call_count, 0)
+
     def _update_with(self, msg):
         self.reader.new_messages.return_value = [1237]
         self.reader.get.return_value = msg

@@ -110,7 +110,13 @@ class OnlineDistributor(Distributor):
         members of the list. If the resend is successful the new messages are deleted.
         '''
         logger.debug('update is called')
-        self._reader.connect()
+
+        try:
+            self._reader.connect()
+        except Exception as e:
+            logger.error('connect failed with the exception: %s', e)
+            return False
+
         ids = self._reader.new_messages()
         for id in ids:
             msg = self._reader.get(id)
