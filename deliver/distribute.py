@@ -114,7 +114,7 @@ class OnlineDistributor(Distributor):
         try:
             self._reader.connect()
         except Exception as e:
-            logger.error('connect failed with the exception: %s', e)
+            logger.info('connect failed with the exception: %s', e)
             return False
 
         ids = self._reader.new_messages()
