@@ -97,3 +97,10 @@ crashing, not serving any emails. To be notified in this case, there
 is a shell script called _panic_. It can also be set up as a cronjob,
 and it checks if the daemon is running. If it is not, an email is sent
 to a specified direction to give a warning.
+
+## Running the tests
+
+To run the tests, additional configuration is needed.
+
+ * `sudo apt-get install sqlite`
+ * `pip install pysqlite --global-option build_static`
