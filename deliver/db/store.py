@@ -10,7 +10,8 @@ logger = logging.getLogger('db')
 
 DB = {
     'sqlite' : 'sqlite',
-    'mysql' : 'mysql'
+    'mysql' : 'mysql',
+    'postgresql' : 'postgresql'
     }
 
 def choose_backend(backend_name):

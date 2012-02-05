@@ -19,9 +19,13 @@ following databases are supported:
 checked starting from version 3.6.19.
 
 2. _MySQL_: An adapter needs to be installed, with something like
-`easy_install MySQL-python`. The instance of the database needs to be
+`pip install MySQL-python`. The instance of the database needs to be
 set up before using _deliver_. It is not necessary to create the
 tables, though.
+
+3. _PostgreSQL_: Same as _MySQL_, although with this adapter `pip
+install psycopg2`. Before that _pg_config_ should be available via
+`apt-get install libpq-dev`.
 
 ## Installation
 
