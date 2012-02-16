@@ -115,6 +115,13 @@ class OnlineDistributeTest(BaseTest):
         self._check_interactions(1237)
         self._check_archived(self.msg)
 
+    def test_update_message_without_subject(self):
+        msg = self._update_with(load_msg('sample13'))
+
+        self._check_start_stop()
+        self._check_interactions(1237)
+        self._check_archived(msg)
+
     # Check internal methods to make sure things are working
     # smoothly
 

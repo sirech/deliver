@@ -39,6 +39,9 @@ class UnicodeMessage(object):
         assert self._body_charset.header_encoding in [None, QP]
         assert self._body_charset.body_encoding in [None, QP]
 
+        if not self._msg.has_key('Subject'):
+            self._msg.add_header('Subject', '')
+
     def __str__(self):
         return self.as_string()
 
