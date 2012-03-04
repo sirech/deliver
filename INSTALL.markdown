@@ -76,8 +76,9 @@ better to use the daemon _deliverdaemon.py_. It can be simply started
 with a command like `python deliverdaemon.py --start` (or with the -h
 option for more info). This "daemonizes" the updater script.
 
-It is recommended to set up a cronjob to check if the process is still
-alive.
+In Ubuntu, _upstart_ can be used to start (and respawn in case of
+errors) the list. Copy the script in _deploy/deliver.conf_ to
+_/etc/init_, and adapt the paths.
 
 #### Digests
 
