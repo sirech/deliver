@@ -65,8 +65,8 @@ def loop():
     try:
         while run:
             success = update()
-        sleep = sleeping_time(sleep, success)
-        time.sleep(sleep)
+            sleep = sleeping_time(sleep, success)
+            time.sleep(sleep)
     except Exception:
         logging.exception('Oh noes! Exception')
 
