@@ -7,7 +7,7 @@ configurations are intended mostly for testing.
 
 1. The package is tested with _Python 2.7_.
 
-2. [http://pypi.python.org/pypi/setuptools](Setuptools) is necessary
+2. [Setuptools](http://pypi.python.org/pypi/setuptools) is necessary
 to install the package.
 
 ## Database
