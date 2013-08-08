@@ -29,7 +29,7 @@ def load_all_msg():
                                                 'sample9',  # blacklisted sender
                                                 'sample10', # get www.google.com
                                                 'sample11', # no header/body encoding
-                                                'sample13', # msg without subject
+                                                'sample13' # msg without subject
                                                 ]]
 
 def get_msg(store, id):

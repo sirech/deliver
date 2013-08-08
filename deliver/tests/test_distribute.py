@@ -166,6 +166,12 @@ class OnlineDistributeTest(BaseTest):
         self.assertEqual(self.distributor._create_header(simple_sender),
                          [u'MIA salté:'])
 
+    def test_create_header_non_member(self):
+        simple_sender = load_msg('sample8')
+        self.config['introductions'] = [ u'salté' ]
+        self.assertEqual(self.distributor._create_header(simple_sender),
+                         [u'whitelist salté:'])
+
     def test_create_footer_special_chars(self):
         quote = u'salté la fuente'
         self.config['quotes'] = [quote]

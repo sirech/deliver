@@ -81,12 +81,19 @@ class Distributor(object):
         Creates a header for the message, returned as a list of strings. The header contains the
         name of the sender and an introduction message.
         '''
-        member = self._mgr.find_member(self._find_sender_email(msg))
+        email = self._find_sender_email(msg)
+        member = self._mgr.find_member(email)
         if member is not None:
-            header = self._mgr.choose_name(member) + ' ' + self._choose_intro() + ':'
-            logger.debug('_create_header produced: %s',  header)
-            return [header]
+            return self._join_header(self._mgr.choose_name(member))
+        elif email != '':
+            addr, _ = email.split('@')
+            return self._join_header(addr)
         return ['']
+
+    def _join_header(self, person):
+        header = person + ' ' + self._choose_intro() + ':'
+        logger.debug('_create_header produced: %s',  header)
+        return [header]
 
 class OnlineDistributor(Distributor):
     '''
