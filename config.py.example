@@ -46,6 +46,9 @@ py['real_name'] = u'My mailing list'
 # be stored in lowercase.
 py['forbidden_words'] = {u'shit' : u's***', u'fuck' : u'f*ck' }
 
+# If this is true, messages from external addresses are accepted only
+# if they are whitelisted
+py['accept_whitelist_only'] = True
 
 ###############
 # MEMBERS

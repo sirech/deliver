@@ -24,8 +24,8 @@ configurable.
 
 Only members of the list are allowed to send messages to the
 list. Additionally, a whitelist and a blacklist can be specified, to
-add addresses that are outright accepted/rejected. (Manual
-confirmation for other addresses is a planned feature)
+add addresses that are outright accepted/rejected. Whitelisting can be
+skipped with a configuration option.
 
 ### Digests
 

@@ -137,6 +137,10 @@ class OnlineDistributeTest(BaseTest):
     def test_isvalid_false(self):
         self.assertFalse(self.distributor._isvalid(load_msg('sample7')))
 
+    def test_isvalid_whitelist_skip(self):
+        self.config['accept_whitelist_only'] = False
+        self.assertTrue(self.distributor._isvalid(load_msg('sample7')))
+
     def test_find_sender_email(self):
         self.assertEqual(self.distributor._find_sender_email(self.msg),
                          'test@mail.com')

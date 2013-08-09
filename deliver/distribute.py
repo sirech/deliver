@@ -52,7 +52,11 @@ class Distributor(object):
         if self._store.message_exists(msg.id):
             logger.error('Message with id %s already exists in the database', msg.id)
             return False
-        return self._mgr.find_member(email) is not None or self._mgr.iswhitelisted(email)
+
+        if self._cfg['accept_whitelist_only']:
+            return self._mgr.find_member(email) is not None or self._mgr.iswhitelisted(email)
+        else:
+            return True
 
     def _find_sender_email(self, msg):
         '''
